@@ -1,0 +1,11 @@
+{
+  "name": "kube_workshop",
+  "version": "1.0.0",
+  "author": "",
+  "description": "",
+  "keywords": [],
+  "license": "ISC",
+  "scripts": {
+    "dev": "bun --serve index.html"
+  }
+}

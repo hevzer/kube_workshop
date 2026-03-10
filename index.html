@@ -1,0 +1,3837 @@
+<!doctype html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Workshop Kubernetes</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@500;700;800&family=Fira+Code:wght@400;500&display=swap"
+            rel="stylesheet"
+        />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        />
+
+        <style>
+            /* THE SETUP */
+            * {
+                box-sizing: border-box;
+            }
+
+            body {
+                background-color: #030712;
+                display: grid;
+                gap: 30px;
+                grid-template-columns: 1fr;
+                margin: 0;
+                min-height: 100vh;
+                padding: 30px 0;
+                place-items: center;
+            }
+
+            .slide-container {
+                align-items: flex-start;
+                background-color: #111827;
+                border-radius: 12px;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+                display: flex;
+                flex-direction: column;
+                font-family: "Inter", sans-serif;
+                height: 720px;
+                justify-content: center;
+                overflow: hidden;
+                padding: 50px 60px;
+                position: relative;
+                width: 1280px;
+            }
+
+            /* BACKGROUND STYLING */
+            .slide-container::before {
+                content: "";
+                position: absolute;
+                width: 1000px;
+                height: 1000px;
+                background: radial-gradient(
+                    circle,
+                    rgba(59, 130, 246, 0.08) 0%,
+                    rgba(17, 24, 39, 0) 50%
+                );
+                top: -400px;
+                right: -300px;
+                z-index: 0;
+                pointer-events: none;
+            }
+
+            .slide-container::after {
+                content: "";
+                position: absolute;
+                width: 800px;
+                height: 800px;
+                background: radial-gradient(
+                    circle,
+                    rgba(225, 29, 72, 0.05) 0%,
+                    rgba(17, 24, 39, 0) 50%
+                );
+                bottom: -400px;
+                left: -300px;
+                z-index: 0;
+                pointer-events: none;
+            }
+
+            /* Accent top border for slides */
+            .slide-container .top-accent {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 6px;
+                background: linear-gradient(90deg, #3b82f6 0%, #e11d48 100%);
+                z-index: 2;
+            }
+
+            .slide-container > * {
+                position: relative;
+                z-index: 1;
+            }
+
+            /* CONSISTENT TYPOGRAPHY */
+            .slide-container h1,
+            .slide-container h2,
+            .slide-container h3,
+            .slide-container h4 {
+                color: #f9fafb;
+                font-family: "Montserrat", sans-serif;
+                margin: 0;
+                line-height: 1.2;
+            }
+
+            .slide-container h1 span,
+            .slide-container h2 span {
+                color: #3b82f6;
+            }
+
+            .slide-container h2 span.bordeaux {
+                color: #e11d48;
+            }
+
+            .slide-container p,
+            .slide-container .subtitle,
+            .slide-container li {
+                color: #d1d5db;
+                font-family: "Inter", sans-serif;
+            }
+
+            .slide-container h1 {
+                font-size: 68px;
+                font-weight: 800;
+                letter-spacing: -1px;
+            }
+
+            .slide-container h2.slide-title {
+                font-size: 48px;
+                font-weight: 700;
+                width: 100%;
+                margin-bottom: 40px;
+            }
+
+            .slide-container h3 {
+                font-size: 24px;
+                font-weight: 600;
+            }
+
+            .slide-container p,
+            .slide-container li {
+                font-size: 19px;
+                font-weight: 400;
+                line-height: 1.6;
+                margin: 0;
+            }
+
+            .slide-container .subtitle {
+                color: #9ca3af;
+                font-size: 24px;
+                font-weight: 500;
+                line-height: 1.4;
+                margin: 15px 0 0 0;
+            }
+
+            .slide-container .content-area {
+                display: flex;
+                flex-direction: column;
+                flex-grow: 1;
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            /* LAYOUT DEFINITIONS */
+
+            /* Title Layout */
+            .title-layout {
+                text-align: center;
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                height: 100%;
+            }
+
+            .title-layout .tag {
+                background-color: rgba(225, 29, 72, 0.15);
+                color: #fb7185;
+                padding: 8px 16px;
+                border-radius: 20px;
+                font-size: 16px;
+                font-weight: 600;
+                display: inline-block;
+                margin-bottom: 20px;
+                width: max-content;
+                border: 1px solid rgba(225, 29, 72, 0.3);
+            }
+
+            /* Quote Layout */
+            .quote-layout {
+                margin: 0 auto;
+                text-align: center;
+                width: 85%;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                height: 100%;
+            }
+
+            .quote-layout blockquote {
+                color: #f9fafb;
+                font-size: 42px;
+                font-family: "Montserrat", sans-serif;
+                font-style: italic;
+                font-weight: 500;
+                line-height: 1.4;
+                margin: 0 0 40px 0;
+                position: relative;
+            }
+
+            .quote-layout blockquote::before {
+                color: #3b82f6;
+                content: '"';
+                font-size: 120px;
+                position: absolute;
+                left: -50px;
+                top: -20px;
+                opacity: 0.3;
+                line-height: 0;
+            }
+
+            .quote-layout cite {
+                color: #60a5fa;
+                font-size: 22px;
+                font-style: normal;
+                font-weight: 600;
+                letter-spacing: 1px;
+                text-transform: uppercase;
+            }
+
+            /* Image Right Text Left Layout */
+            .two-column {
+                display: flex;
+                gap: 50px;
+                width: 100%;
+                height: 100%;
+                align-items: flex-start;
+            }
+
+            .two-column .content-container {
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+                width: 50%;
+            }
+
+            .two-column .image-container {
+                height: 480px;
+                width: 50%;
+                border-radius: 12px;
+                overflow: hidden;
+                border: 1px solid #374151;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            }
+
+            /* Bullet List */
+            .bullet-list {
+                list-style: none;
+                margin: 0;
+                padding: 0;
+            }
+
+            .bullet-list li {
+                padding-left: 35px;
+                position: relative;
+                margin-bottom: 25px;
+            }
+
+            .bullet-list li::before {
+                color: #3b82f6;
+                content: "\f0da";
+                font-family: "Font Awesome 6 Free";
+                font-weight: 900;
+                font-size: 20px;
+                left: 0;
+                position: absolute;
+                top: 2px;
+            }
+
+            /* Section Title Layout */
+            .section-title-layout {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                height: 100%;
+                width: 100%;
+            }
+
+            .section-title-layout h2 {
+                font-size: 72px;
+                font-weight: 800;
+            }
+
+            .section-title-layout hr {
+                width: 120px;
+                height: 6px;
+                background-color: #e11d48;
+                border: none;
+                margin: 40px 0;
+                border-radius: 3px;
+            }
+
+            .section-title-layout p {
+                font-size: 26px;
+                color: #9ca3af;
+                max-width: 800px;
+            }
+
+            /* Two Column Tiled Text */
+            .two-column-tiled {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 40px;
+                width: 100%;
+                height: 100%;
+            }
+
+            .two-column-tiled .tile {
+                background-color: #1f2937;
+                border: 1px solid rgba(255, 255, 255, 0.05);
+                border-radius: 16px;
+                padding: 40px;
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .two-column-tiled .tile h3 {
+                color: #60a5fa;
+                font-size: 32px;
+            }
+
+            .two-column-tiled .tile.accent-tile h3 {
+                color: #fb7185;
+            }
+
+            .two-column-tiled .title-container {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: flex-start;
+            }
+
+            .two-column-tiled .icon-container {
+                align-items: center;
+                background-color: rgba(59, 130, 246, 0.15);
+                border-radius: 12px;
+                color: #60a5fa;
+                display: flex;
+                font-size: 26px;
+                height: 56px;
+                justify-content: center;
+                width: 56px;
+                flex-shrink: 0;
+            }
+
+            .two-column-tiled .accent-tile .icon-container {
+                background-color: rgba(225, 29, 72, 0.15);
+                color: #fb7185;
+            }
+
+            /* Tiled Text With Icons Layout */
+            .tiled-content {
+                display: grid;
+                gap: 30px;
+                grid-template-columns: repeat(3, 1fr);
+                width: 100%;
+            }
+
+            .tiled-content .tile {
+                background-color: #1f2937;
+                border-radius: 16px;
+                border: 1px solid rgba(255, 255, 255, 0.05);
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+                padding: 40px 30px;
+            }
+
+            .tiled-content .tile .title-container {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: flex-start;
+            }
+
+            .tiled-content .tile .main-title {
+                color: #f9fafb;
+                font-size: 26px;
+                font-weight: 700;
+                margin: 0 0 8px 0;
+            }
+
+            .tiled-content .tile .sub-title {
+                color: #9ca3af;
+                font-size: 15px;
+                font-weight: 600;
+                margin: 0;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+
+            .tiled-content .tile .icon-container {
+                align-items: center;
+                background-color: rgba(59, 130, 246, 0.15);
+                border-radius: 12px;
+                color: #60a5fa;
+                display: flex;
+                font-size: 26px;
+                height: 56px;
+                justify-content: center;
+                width: 56px;
+                flex-shrink: 0;
+            }
+
+            .tiled-content .tile.accent-tile .icon-container {
+                background-color: rgba(225, 29, 72, 0.15);
+                color: #fb7185;
+            }
+
+            /* Styled Bullet Points Layout */
+            .styled-bullet-list {
+                width: 100%;
+                max-width: 1100px;
+                margin: 0 auto;
+            }
+
+            .styled-bullet-list ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+                display: flex;
+                flex-direction: column;
+                gap: 25px;
+            }
+
+            .styled-bullet-list li {
+                background-color: #1f2937;
+                border-left: 5px solid #e11d48;
+                border-radius: 0 12px 12px 0;
+                padding: 25px 30px;
+                position: relative;
+                display: flex;
+                align-items: flex-start;
+            }
+
+            .styled-bullet-list .icon-wrapper {
+                color: #e11d48;
+                font-size: 32px;
+                margin-right: 25px;
+                margin-top: 5px;
+                flex-shrink: 0;
+                width: 40px;
+                text-align: center;
+            }
+
+            .styled-bullet-list .text-content {
+                flex-grow: 1;
+            }
+
+            .styled-bullet-list h3 {
+                color: #f9fafb;
+                font-size: 22px;
+                margin-bottom: 8px;
+            }
+
+            .styled-bullet-list p {
+                color: #d1d5db;
+                margin: 0;
+                font-size: 18px;
+            }
+
+            /* Q&A Layout */
+            .qa-layout {
+                text-align: center;
+                width: 100%;
+                align-self: center;
+            }
+
+            .qa-layout h2 {
+                font-size: 90px;
+                margin-bottom: 20px;
+                font-weight: 800;
+            }
+
+            .qa-layout p {
+                font-size: 28px;
+                color: #9ca3af;
+            }
+
+            /* --- COMPARISON SLIDE STYLES --- */
+            .comparison-container {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 60px;
+                width: 100%;
+                margin-top: 40px;
+                align-items: stretch;
+            }
+
+            .comparison-card {
+                background-color: #1f2937;
+                border-radius: 12px;
+                padding: 60px 40px 40px;
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                gap: 25px;
+            }
+
+            .comparison-card.chaos {
+                border: 1px solid #374151;
+                border-top: 6px solid #6b7280;
+            }
+
+            .comparison-card.harmony {
+                border: 1px solid #2563eb;
+                border-top: 6px solid #3b82f6;
+                box-shadow: 0 0 30px rgba(59, 130, 246, 0.15);
+            }
+
+            .comparison-icon-wrapper {
+                position: absolute;
+                top: -45px;
+                left: 50%;
+                transform: translateX(-50%);
+                background-color: #111827;
+                padding: 0 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 80px;
+            }
+
+            .comparison-icon-wrapper i {
+                font-size: 55px;
+            }
+
+            .chaos .icon-stack {
+                position: relative;
+                display: inline-block;
+                width: 60px;
+                height: 60px;
+            }
+
+            .chaos .icon-stack .fa-server {
+                color: #9ca3af;
+                font-size: 55px;
+                position: absolute;
+                bottom: 0;
+                left: 0;
+            }
+
+            .chaos .icon-stack .fa-fire {
+                color: #ef4444;
+                font-size: 40px;
+                position: absolute;
+                top: -15px;
+                right: -5px;
+                filter: drop-shadow(0 0 10px rgba(239, 68, 68, 0.6));
+            }
+
+            .harmony .comparison-icon-wrapper i {
+                color: #93c5fd;
+                filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.6));
+            }
+
+            .comparison-card h3 {
+                font-size: 32px;
+                margin-bottom: 10px;
+                text-align: left;
+            }
+
+            .chaos h3 {
+                color: #f3f4f6;
+            }
+
+            .harmony h3 {
+                color: #93c5fd;
+            }
+
+            .comparison-list {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .comparison-list li {
+                position: relative;
+                padding-left: 25px;
+                font-size: 22px;
+                line-height: 1.5;
+                color: #d1d5db;
+            }
+
+            .comparison-list li::before {
+                content: "-";
+                position: absolute;
+                left: 0;
+                color: #9ca3af;
+                font-weight: 700;
+            }
+
+            /* --- YAML SYNTAX SLIDE STYLES --- */
+            .yaml-container {
+                display: flex;
+                gap: 40px;
+                width: 100%;
+                align-items: center;
+            }
+
+            .yaml-code-block {
+                background-color: #0d1117;
+                border: 1px solid #374151;
+                border-radius: 12px;
+                padding: 30px;
+                width: 40%;
+                font-family: "Fira Code", monospace;
+                font-size: 20px;
+                line-height: 1.8;
+                color: #e5e7eb;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+                position: relative;
+            }
+
+            .yaml-key {
+                color: #60a5fa;
+            } /* Blue */
+            .yaml-value {
+                color: #a7f3d0;
+            } /* Green */
+            .yaml-string {
+                color: #fcd34d;
+            } /* Light yellow for strings */
+
+            .yaml-explanations {
+                display: flex;
+                flex-direction: column;
+                gap: 25px;
+                width: 60%;
+            }
+
+            .yaml-exp-item {
+                background-color: #1f2937;
+                border-radius: 8px;
+                padding: 20px 25px;
+                border-left: 4px solid #3b82f6;
+            }
+
+            .yaml-exp-item span.keyword {
+                font-family: "Fira Code", monospace;
+                color: #60a5fa;
+                font-weight: 600;
+                font-size: 22px;
+            }
+
+            .yaml-exp-item p {
+                margin-top: 5px;
+                font-size: 18px;
+            }
+
+            /* --- DEPLOYMENT HIERARCHY CSS --- */
+            .deployment-hierarchy {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                width: 100%;
+                padding: 10px 0;
+            }
+
+            .dh-box {
+                background: linear-gradient(135deg, #1e3a8a 0%, #172554 100%);
+                border: 2px solid #3b82f6;
+                border-radius: 12px;
+                color: #eff6ff;
+                font-family: "Montserrat", sans-serif;
+                font-weight: 700;
+                font-size: 22px;
+                padding: 15px 40px;
+                text-align: center;
+                box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+                position: relative;
+                z-index: 2;
+                min-width: 220px;
+            }
+
+            .dh-box.rs {
+                background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+                border-color: #60a5fa;
+            }
+
+            .dh-line-down {
+                width: 4px;
+                background-color: #3b82f6;
+                position: relative;
+                z-index: 1;
+            }
+
+            .dh-arrow {
+                position: absolute;
+                bottom: -2px;
+                left: -8px;
+                border-width: 10px 10px 0;
+                border-style: solid;
+                border-color: #3b82f6 transparent transparent transparent;
+            }
+
+            .dh-fork {
+                display: flex;
+                position: relative;
+                justify-content: center;
+                width: 100%;
+            }
+
+            .dh-fork-horizontal {
+                width: 280px;
+                height: 4px;
+                background-color: #3b82f6;
+                position: absolute;
+                top: 0;
+            }
+
+            .dh-fork-legs {
+                display: flex;
+                gap: 40px;
+                padding-top: 0;
+            }
+
+            .dh-leg {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .dh-pod {
+                background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+                border: 2px solid #93c5fd;
+                border-radius: 12px;
+                color: #eff6ff;
+                font-family: "Montserrat", sans-serif;
+                font-weight: 700;
+                font-size: 20px;
+                padding: 15px 25px;
+                text-align: center;
+                box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+                min-width: 100px;
+                z-index: 2;
+            }
+
+            /* --- NOUVEAU DESIGN TP (TERMINAL WINDOW) --- */
+            .tp-list {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+                display: flex;
+                flex-direction: column;
+                gap: 35px;
+            }
+            .tp-list li {
+                background-color: transparent;
+                border: none;
+                padding: 0;
+            }
+            .tp-list h3 {
+                color: #f9fafb;
+                font-size: 24px;
+                margin-bottom: 10px;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+            .tp-list h3 i {
+                color: #e11d48;
+                font-size: 22px;
+            }
+            .tp-list p {
+                color: #d1d5db;
+                font-size: 19px;
+                line-height: 1.5;
+                margin-left: 34px; /* Alignement avec le texte du titre */
+            }
+
+            .terminal-container {
+                background-color: #0d1117;
+                border-radius: 12px;
+                border: 1px solid #374151;
+                width: 100%;
+                height: 500px;
+                display: flex;
+                flex-direction: column;
+                overflow: hidden;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            }
+            .terminal-header {
+                background-color: #1f2937;
+                padding: 12px 20px;
+                display: flex;
+                align-items: center;
+                border-bottom: 1px solid #374151;
+            }
+            .terminal-dots {
+                display: flex;
+                gap: 8px;
+            }
+            .terminal-dots span {
+                width: 14px;
+                height: 14px;
+                border-radius: 50%;
+            }
+            .dot-red {
+                background-color: #ff5f56;
+            }
+            .dot-yellow {
+                background-color: #ffbd2e;
+            }
+            .dot-green {
+                background-color: #27c93f;
+            }
+            .terminal-title {
+                color: #9ca3af;
+                font-family: "Inter", sans-serif;
+                font-size: 14px;
+                margin-left: auto;
+                margin-right: auto;
+                padding-right: 40px; /* Balance les points */
+            }
+            .terminal-body {
+                padding: 25px;
+                color: #e5e7eb;
+                font-family: "Fira Code", monospace;
+                font-size: 17px;
+                line-height: 1.6;
+                flex-grow: 1;
+                overflow-wrap: break-word;
+                word-break: break-all;
+            }
+            .terminal-body .prompt {
+                color: #27c93f;
+                margin-right: 10px;
+                font-weight: bold;
+                user-select: none;
+            }
+            .terminal-body .command {
+                color: #60a5fa;
+            }
+            .terminal-body .comment {
+                color: #6b7280;
+                font-style: italic;
+                display: block;
+                margin-top: 20px;
+                margin-bottom: 5px;
+            }
+            .terminal-body .comment:first-child {
+                margin-top: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Slide 1: Title_Slide -->
+        <div class="slide-container" id="slide1">
+            <div class="top-accent"></div>
+            <div class="title-layout">
+                <div class="tag">Workshop • 4 Heures</div>
+                <h1>Les bases de<br /><span>Kubernetes</span></h1>
+                <div
+                    style="
+                        margin-top: 50px;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        gap: 8px;
+                    "
+                >
+                    <p
+                        style="
+                            font-size: 20px;
+                            color: #60a5fa;
+                            margin: 0;
+                            font-family: &quot;Fira Code&quot;, monospace;
+                        "
+                    >
+                        <i
+                            class="fa-brands fa-github"
+                            style="margin-right: 10px"
+                        ></i
+                        >github.com/hevzer
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: Quote -->
+        <div class="slide-container" id="slide2">
+            <div class="top-accent"></div>
+            <div class="content-area">
+                <div class="quote-layout">
+                    <blockquote>
+                        L'objectif n'est pas seulement de faire tourner des
+                        conteneurs, mais de garantir la résilience,
+                        l'observabilité et d'adopter une véritable culture
+                        DevOps.
+                    </blockquote>
+                    <cite>Philosophie SRE & DevSecOps</cite>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Prérequis (Connaissances) -->
+        <div class="slide-container" id="slide3">
+            <div class="top-accent"></div>
+            <h2 class="slide-title">Connaissances <span>Requises</span></h2>
+            <p class="subtitle" style="margin-top: -30px; margin-bottom: 40px">
+                Les bases fondamentales pour appréhender ce workshop
+                sereinement.
+            </p>
+            <div class="content-area">
+                <div class="tiled-content">
+                    <div class="tile">
+                        <div class="title-container">
+                            <div>
+                                <p class="main-title">Linux & CLI</p>
+                                <p class="sub-title">Le terminal</p>
+                            </div>
+                            <span class="icon-container"
+                                ><i class="fa-solid fa-terminal"></i
+                            ></span>
+                        </div>
+                        <p>
+                            Maîtriser les commandes de base (cd, ls, cat, grep),
+                            la navigation dans le système de fichiers et les
+                            concepts réseau de base (IP, ports).
+                        </p>
+                    </div>
+                    <div class="tile">
+                        <div class="title-container">
+                            <div>
+                                <p class="main-title">Conteneurs</p>
+                                <p class="sub-title">Docker / Podman</p>
+                            </div>
+                            <span class="icon-container"
+                                ><i class="fa-brands fa-docker"></i
+                            ></span>
+                        </div>
+                        <p>
+                            Comprendre ce qu'est une image, un conteneur en
+                            cours d'exécution, et savoir écrire un Dockerfile
+                            basique pour isoler une application.
+                        </p>
+                    </div>
+                    <div class="tile accent-tile">
+                        <div class="title-container">
+                            <div>
+                                <p class="main-title">YAML</p>
+                                <p class="sub-title">Infra as Code</p>
+                            </div>
+                            <span class="icon-container"
+                                ><i class="fa-solid fa-file-code"></i
+                            ></span>
+                        </div>
+                        <p>
+                            Savoir lire et écrire du format YAML (indentation
+                            stricte, listes, dictionnaires), langage utilisé
+                            pour déclarer l'ensemble des ressources Kubernetes.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: History (Origines) -->
+        <div class="slide-container" id="slide4">
+            <div class="top-accent"></div>
+            <h2 class="slide-title">Un peu <span>d'Histoire</span></h2>
+            <div class="content-area">
+                <div class="two-column" style="align-items: center">
+                    <div class="content-container">
+                        <div>
+                            <ul class="bullet-list">
+                                <li>
+                                    <strong>L'Héritage Google :</strong> Né de
+                                    l'expérience de Google avec ses systèmes
+                                    d'orchestration internes colossaux :
+                                    <strong>Borg</strong> et
+                                    <strong>Omega</strong>.
+                                </li>
+                                <li>
+                                    <strong>L'Open Source (2014) :</strong>
+                                    Google libère le projet publiquement. Le nom
+                                    "Kubernetes" vient du grec ancien et
+                                    signifie « Timonier » ou « Pilote ».
+                                </li>
+                                <li>
+                                    <strong
+                                        >La Naissance de la CNCF (2015)
+                                        :</strong
+                                    >
+                                    Sortie de la v1.0. Kubernetes devient le
+                                    tout premier projet géré par la
+                                    <em>Cloud Native Computing Foundation</em>.
+                                </li>
+                                <li>
+                                    <strong>L'Anecdote du Logo :</strong> Les 7
+                                    branches de la barre à roue (le logo de K8s)
+                                    font référence au nom de code original du
+                                    projet : <em>Project Seven of Nine</em>.
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div
+                        class="image-container"
+                        style="
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            background: radial-gradient(
+                                circle,
+                                rgba(59, 130, 246, 0.15) 0%,
+                                #1f2937 80%
+                            );
+                            border: 1px solid rgba(59, 130, 246, 0.4);
+                            border-radius: 16px;
+                        "
+                    >
+                        <i
+                            class="fa-solid fa-dharmachakra"
+                            style="
+                                font-size: 180px;
+                                color: #60a5fa;
+                                filter: drop-shadow(
+                                    0 0 25px rgba(59, 130, 246, 0.6)
+                                );
+                            "
+                        ></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Besoins Architecturaux -->
+        <div class="slide-container" id="slide5">
+            <div class="top-accent"></div>
+            <h2 class="slide-title">Les Besoins <span>Architecturaux</span></h2>
+            <p class="subtitle" style="margin-top: -30px; margin-bottom: 40px">
+                Quels défis les architectures modernes (Microservices)
+                doivent-elles relever ?
+            </p>
+            <div class="content-area">
+                <div class="tiled-content">
+                    <div class="tile">
+                        <div class="title-container">
+                            <div>
+                                <p class="main-title">Haute Disponibilité</p>
+                                <p class="sub-title">Tolérance aux pannes</p>
+                            </div>
+                            <span class="icon-container"
+                                ><i class="fa-solid fa-shield-heart"></i
+                            ></span>
+                        </div>
+                        <p>
+                            Garantir que l'application reste accessible 24/7,
+                            même si un composant matériel (nœud) ou logiciel
+                            (conteneur) subit une défaillance critique.
+                        </p>
+                    </div>
+                    <div class="tile">
+                        <div class="title-container">
+                            <div>
+                                <p class="main-title">Scalabilité</p>
+                                <p class="sub-title">Adaptation à la charge</p>
+                            </div>
+                            <span class="icon-container"
+                                ><i class="fa-solid fa-chart-line"></i
+                            ></span>
+                        </div>
+                        <p>
+                            Être capable d'absorber instantanément les pics de
+                            trafic en multipliant les instances, puis réduire la
+                            voilure pour optimiser les coûts Cloud.
+                        </p>
+                    </div>
+                    <div class="tile accent-tile">
+                        <div class="title-container">
+                            <div>
+                                <p class="main-title">Automatisation</p>
+                                <p class="sub-title">Vitesse & Fiabilité</p>
+                            </div>
+                            <span class="icon-container"
+                                ><i class="fa-solid fa-rotate"></i
+                            ></span>
+                        </div>
+                        <p>
+                            Déployer de nouvelles versions de manière fluide
+                            (Rolling Updates) et pouvoir revenir en arrière
+                            instantanément (Rollbacks) en cas de bug en
+                            production.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Docker vs K8s (Le Mythe) -->
+        <div class="slide-container" id="slide6">
+            <div class="top-accent"></div>
+            <h2
+                class="slide-title"
+                style="text-align: center; width: 100%; margin-bottom: 20px"
+            >
+                Brisons un mythe : <span>Docker vs Kubernetes</span>
+            </h2>
+            <p
+                class="subtitle"
+                style="
+                    text-align: center;
+                    margin-top: 0;
+                    margin-bottom: 40px;
+                    width: 100%;
+                "
+            >
+                Non, Kubernetes ne "remplace" pas Docker. Ils travaillent
+                ensemble.
+            </p>
+
+            <div
+                class="content-area"
+                style="justify-content: center; position: relative"
+            >
+                <div class="comparison-container" style="margin-top: 0">
+                    <!-- Docker Card -->
+                    <div
+                        class="comparison-card"
+                        style="
+                            border-top: 6px solid #2496ed;
+                            border-color: #374151;
+                            background: linear-gradient(
+                                180deg,
+                                rgba(36, 150, 237, 0.05) 0%,
+                                #1f2937 100%
+                            );
+                            align-items: center;
+                            text-align: center;
+                        "
+                    >
+                        <i
+                            class="fa-brands fa-docker"
+                            style="
+                                font-size: 80px;
+                                color: #2496ed;
+                                margin-bottom: 10px;
+                                filter: drop-shadow(
+                                    0 0 15px rgba(36, 150, 237, 0.3)
+                                );
+                            "
+                        ></i>
+                        <h3
+                            style="
+                                color: #2496ed;
+                                text-align: center;
+                                margin: 0;
+                                font-size: 28px;
+                            "
+                        >
+                            Docker (L'Ouvrier)
+                        </h3>
+                        <ul
+                            class="bullet-list"
+                            style="
+                                margin-top: 15px;
+                                text-align: left;
+                                width: 100%;
+                            "
+                        >
+                            <li>
+                                <strong>Objectif :</strong> Créer et empaqueter
+                                (Build).
+                            </li>
+                            <li>
+                                <strong>Périmètre :</strong> Une seule machine
+                                hôte.
+                            </li>
+                            <li>
+                                <strong>Action :</strong> Exécute l'application
+                                de manière standardisée et isolée. Il fabrique
+                                la brique.
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- K8s Card -->
+                    <div
+                        class="comparison-card"
+                        style="
+                            border-top: 6px solid #3b82f6;
+                            border-color: #374151;
+                            background: linear-gradient(
+                                180deg,
+                                rgba(59, 130, 246, 0.05) 0%,
+                                #1f2937 100%
+                            );
+                            align-items: center;
+                            text-align: center;
+                        "
+                    >
+                        <i
+                            class="fa-solid fa-dharmachakra"
+                            style="
+                                font-size: 80px;
+                                color: #3b82f6;
+                                margin-bottom: 10px;
+                                filter: drop-shadow(
+                                    0 0 15px rgba(59, 130, 246, 0.3)
+                                );
+                            "
+                        ></i>
+                        <h3
+                            style="
+                                color: #3b82f6;
+                                text-align: center;
+                                margin: 0;
+                                font-size: 28px;
+                            "
+                        >
+                            Kubernetes (L'Architecte)
+                        </h3>
+                        <ul
+                            class="bullet-list"
+                            style="
+                                margin-top: 15px;
+                                text-align: left;
+                                width: 100%;
+                            "
+                        >
+                            <li>
+                                <strong>Objectif :</strong> Gérer et orchestrer.
+                            </li>
+                            <li>
+                                <strong>Périmètre :</strong> Un cluster entier
+                                (des dizaines de serveurs).
+                            </li>
+                            <li>
+                                <strong>Action :</strong> Décide <em>où</em> et
+                                <em>quand</em> déployer les briques Docker pour
+                                construire l'immeuble.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Handshake Icon in middle -->
+                <div
+                    style="
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        background: #111827;
+                        border-radius: 50%;
+                        width: 80px;
+                        height: 80px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 35px;
+                        color: #d1d5db;
+                        z-index: 10;
+                        border: 2px solid #374151;
+                        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+                    "
+                >
+                    <i class="fa-solid fa-handshake"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Analogie du Chef d'Orchestre -->
+        <div class="slide-container" id="slide7">
+            <div class="top-accent"></div>
+            <h2 class="slide-title">
+                L'analogie du <span>Chef d'Orchestre</span>
+            </h2>
+            <div class="content-area">
+                <div class="two-column" style="align-items: center; gap: 40px">
+                    <div
+                        class="image-container"
+                        style="
+                            width: 45%;
+                            height: 450px;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            justify-content: center;
+                            background: radial-gradient(
+                                circle,
+                                rgba(59, 130, 246, 0.15) 0%,
+                                #1f2937 80%
+                            );
+                            border: 1px solid rgba(59, 130, 246, 0.4);
+                            border-radius: 16px;
+                        "
+                    >
+                        <i
+                            class="fa-solid fa-music"
+                            style="
+                                font-size: 110px;
+                                color: #3b82f6;
+                                margin-bottom: 20px;
+                                filter: drop-shadow(
+                                    0 0 15px rgba(59, 130, 246, 0.5)
+                                );
+                            "
+                        ></i>
+                        <i
+                            class="fa-solid fa-wand-magic-sparkles"
+                            style="
+                                font-size: 70px;
+                                color: #e11d48;
+                                filter: drop-shadow(
+                                    0 0 15px rgba(225, 29, 72, 0.5)
+                                );
+                            "
+                        ></i>
+                    </div>
+                    <div class="content-container" style="width: 55%">
+                        <div class="styled-bullet-list" style="width: 100%">
+                            <ul style="gap: 20px">
+                                <li
+                                    style="
+                                        border-left-color: #3b82f6;
+                                        padding: 25px 30px;
+                                    "
+                                >
+                                    <div
+                                        class="icon-wrapper"
+                                        style="color: #60a5fa; margin-top: 0"
+                                    >
+                                        <i class="fa-solid fa-users"></i>
+                                    </div>
+                                    <div class="text-content">
+                                        <h3 style="color: #f9fafb">
+                                            Les Musiciens (Les Conteneurs)
+                                        </h3>
+                                        <p>
+                                            Chacun exécute une partie de
+                                            l'application (API, BDD, Frontend).
+                                        </p>
+                                    </div>
+                                </li>
+                                <li
+                                    style="
+                                        border-left-color: #3b82f6;
+                                        padding: 25px 30px;
+                                    "
+                                >
+                                    <div
+                                        class="icon-wrapper"
+                                        style="color: #60a5fa; margin-top: 0"
+                                    >
+                                        <i
+                                            class="fa-solid fa-wand-magic-sparkles"
+                                        ></i>
+                                    </div>
+                                    <div class="text-content">
+                                        <h3 style="color: #f9fafb">
+                                            Le Chef d'Orchestre (Kubernetes)
+                                        </h3>
+                                        <p>
+                                            Coordonne, ajuste le tempo, corrige
+                                            les fausses notes.
+                                        </p>
+                                    </div>
+                                </li>
+                                <li
+                                    style="
+                                        border-left-color: #3b82f6;
+                                        padding: 25px 30px;
+                                    "
+                                >
+                                    <div
+                                        class="icon-wrapper"
+                                        style="color: #60a5fa; margin-top: 0"
+                                    >
+                                        <i class="fa-solid fa-server"></i>
+                                    </div>
+                                    <div class="text-content">
+                                        <h3 style="color: #f9fafb">
+                                            La Salle de Concert (Le Cluster)
+                                        </h3>
+                                        <p>
+                                            L'ensemble des machines hôtes
+                                            (ressources CPU, RAM).
+                                        </p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Pourquoi K8s -->
+        <div class="slide-container" id="slide8">
+            <div class="top-accent"></div>
+            <h2
+                class="slide-title"
+                style="text-align: center; width: 100%; margin-bottom: 30px"
+            >
+                Pourquoi <span>Kubernetes</span> ?
+            </h2>
+            <div class="content-area" style="justify-content: center">
+                <div class="comparison-container">
+                    <div class="comparison-card chaos">
+                        <div class="comparison-icon-wrapper">
+                            <div class="icon-stack">
+                                <i class="fa-solid fa-server"></i>
+                                <i class="fa-solid fa-fire"></i>
+                            </div>
+                        </div>
+                        <h3>Sans Orchestrateur (Chaos) :</h3>
+                        <ul class="comparison-list">
+                            <li>Démarrage manuel de dizaines de conteneurs.</li>
+                            <li>Un conteneur plante = Application en panne.</li>
+                            <li>Pic de trafic = Serveur saturé (Crash).</li>
+                        </ul>
+                    </div>
+
+                    <div class="comparison-card harmony">
+                        <div class="comparison-icon-wrapper">
+                            <i class="fa-solid fa-cubes"></i>
+                        </div>
+                        <h3>Avec Kubernetes (Harmonie) :</h3>
+                        <ul class="comparison-list">
+                            <li>Création automatisée via des règles.</li>
+                            <li>
+                                Auto-réparation : Détection et relance
+                                automatiques.
+                            </li>
+                            <li>
+                                Autoscaling : Ajout de conteneurs à la volée.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Architecture -->
+        <div class="slide-container" id="slide9">
+            <div class="top-accent"></div>
+            <div class="section-title-layout">
+                <h2>L'Architecture du <span>Cluster</span></h2>
+                <hr />
+                <p>
+                    La séparation stricte entre le pilotage (Control Plane) et
+                    l'exécution (Worker Nodes).
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 10: Cerveau vs Muscles -->
+        <div class="slide-container" id="slide10">
+            <div class="top-accent"></div>
+            <h2 class="slide-title">Le Cerveau vs Les <span>Muscles</span></h2>
+            <div class="content-area">
+                <div class="two-column-tiled">
+                    <div class="tile">
+                        <div class="title-container">
+                            <div>
+                                <h3 style="margin: 0">Le Control Plane</h3>
+                                <p
+                                    style="
+                                        margin-top: 5px;
+                                        color: #9ca3af;
+                                        font-size: 16px;
+                                        font-weight: 600;
+                                        text-transform: uppercase;
+                                        letter-spacing: 1px;
+                                    "
+                                >
+                                    Le Cerveau
+                                </p>
+                            </div>
+                            <span class="icon-container"
+                                ><i class="fa-solid fa-brain"></i
+                            ></span>
+                        </div>
+                        <p>
+                            C'est le centre de contrôle global. Il prend les
+                            décisions globales concernant le cluster (comme la
+                            planification des charges de travail), détecte et
+                            réagit aux événements du cluster (comme le démarrage
+                            d'un nouveau pod lorsqu'un réplica est manquant).
+                        </p>
+                    </div>
+                    <div class="tile accent-tile">
+                        <div class="title-container">
+                            <div>
+                                <h3 style="margin: 0">Les Worker Nodes</h3>
+                                <p
+                                    style="
+                                        margin-top: 5px;
+                                        color: #9ca3af;
+                                        font-size: 16px;
+                                        font-weight: 600;
+                                        text-transform: uppercase;
+                                        letter-spacing: 1px;
+                                    "
+                                >
+                                    Les Muscles
+                                </p>
+                            </div>
+                            <span class="icon-container"
+                                ><i class="fa-solid fa-dumbbell"></i
+                            ></span>
+                        </div>
+                        <p>
+                            Ce sont les machines (virtuelles ou physiques) qui
+                            exécutent réellement vos applications. Chaque nœud
+                            est géré par le Control Plane et contient les
+                            services nécessaires pour faire tourner les Pods.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Control Plane -->
+        <div class="slide-container" id="slide11">
+            <div class="top-accent"></div>
+            <h2 class="slide-title">
+                Composants du <span>Control Plane</span>
+            </h2>
+            <div class="content-area">
+                <div class="tiled-content">
+                    <div class="tile">
+                        <div class="title-container">
+                            <div>
+                                <p class="main-title">API Server</p>
+                                <p class="sub-title">Le point d'entrée</p>
+                            </div>
+                            <span class="icon-container"
+                                ><i class="fa-solid fa-server"></i
+                            ></span>
+                        </div>
+                        <p>
+                            Le frontend du Control Plane. Il expose l'API
+                            Kubernetes. Toute communication, qu'elle vienne de
+                            vous (kubectl) ou des composants internes, passe par
+                            lui.
+                        </p>
+                    </div>
+                    <div class="tile">
+                        <div class="title-container">
+                            <div>
+                                <p class="main-title">etcd</p>
+                                <p class="sub-title">La mémoire centrale</p>
+                            </div>
+                            <span class="icon-container"
+                                ><i class="fa-solid fa-database"></i
+                            ></span>
+                        </div>
+                        <p>
+                            Base de données clé-valeur hautement disponible et
+                            cohérente. Elle stocke l'intégralité des données du
+                            cluster (configuration, état désiré vs état actuel).
+                        </p>
+                    </div>
+                    <div class="tile">
+                        <div class="title-container">
+                            <div>
+                                <p class="main-title">Scheduler</p>
+                                <p class="sub-title">Le répartiteur</p>
+                            </div>
+                            <span class="icon-container"
+                                ><i class="fa-solid fa-calendar-check"></i
+                            ></span>
+                        </div>
+                        <p>
+                            Surveille la création des Pods sans nœud assigné et
+                            sélectionne le meilleur Worker Node pour les
+                            exécuter, en fonction des contraintes de ressources.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Worker Nodes -->
+        <div class="slide-container" id="slide12">
+            <div class="top-accent"></div>
+            <h2 class="slide-title">
+                Composants des <span class="bordeaux">Worker Nodes</span>
+            </h2>
+            <div class="content-area">
+                <div class="tiled-content">
+                    <div class="tile">
+                        <div class="title-container">
+                            <div>
+                                <p class="main-title">Kubelet</p>
+                                <p class="sub-title">Le contremaître</p>
+                            </div>
+                            <span
+                                class="icon-container"
+                                style="
+                                    background-color: rgba(225, 29, 72, 0.15);
+                                    color: #fb7185;
+                                "
+                                ><i class="fa-solid fa-hard-hat"></i
+                            ></span>
+                        </div>
+                        <p>
+                            L'agent principal sur chaque nœud. Il communique
+                            avec l'API Server et s'assure que les conteneurs
+                            décrits dans un PodSpec tournent et sont sains.
+                        </p>
+                    </div>
+                    <div class="tile">
+                        <div class="title-container">
+                            <div>
+                                <p class="main-title">Kube-Proxy</p>
+                                <p class="sub-title">L'aiguilleur réseau</p>
+                            </div>
+                            <span
+                                class="icon-container"
+                                style="
+                                    background-color: rgba(225, 29, 72, 0.15);
+                                    color: #fb7185;
+                                "
+                                ><i class="fa-solid fa-network-wired"></i
+                            ></span>
+                        </div>
+                        <p>
+                            Maintient les règles réseau sur le nœud. Ces règles
+                            permettent la communication réseau vers les Pods
+                            depuis l'intérieur ou l'extérieur du cluster.
+                        </p>
+                    </div>
+                    <div class="tile">
+                        <div class="title-container">
+                            <div>
+                                <p class="main-title">Container Runtime</p>
+                                <p class="sub-title">Le moteur</p>
+                            </div>
+                            <span
+                                class="icon-container"
+                                style="
+                                    background-color: rgba(225, 29, 72, 0.15);
+                                    color: #fb7185;
+                                "
+                                ><i class="fa-brands fa-docker"></i
+                            ></span>
+                        </div>
+                        <p>
+                            Le logiciel responsable de l'exécution des
+                            conteneurs (Containerd, CRI-O). Il télécharge les
+                            images et gère le cycle de vie du processus isolé.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 13: YAML Syntax -->
+        <div class="slide-container" id="slide13">
+            <div class="top-accent"></div>
+            <h2 class="slide-title">
+                Le Langage : <span>Manifestes YAML</span>
+            </h2>
+            <div class="content-area" style="justify-content: center">
+                <div class="yaml-container">
+                    <div class="yaml-code-block">
+                        <div>
+                            <span class="yaml-key">apiVersion</span>:
+                            <span class="yaml-value">v1</span>
+                        </div>
+                        <div>
+                            <span class="yaml-key">kind</span>:
+                            <span class="yaml-value">Pod</span>
+                        </div>
+                        <div><span class="yaml-key">metadata</span>:</div>
+                        <div>
+                            &nbsp;&nbsp;<span class="yaml-key">name</span>:
+                            <span class="yaml-string">mon-pod</span>
+                        </div>
+                        <div><span class="yaml-key">spec</span>:</div>
+                        <div>
+                            &nbsp;&nbsp;<span class="yaml-key">containers</span
+                            >:
+                        </div>
+                        <div>
+                            &nbsp;&nbsp;- <span class="yaml-key">name</span>:
+                            <span class="yaml-string">nginx</span>
+                        </div>
+                    </div>
+
+                    <div class="yaml-explanations">
+                        <div class="yaml-exp-item">
+                            <span class="keyword">apiVersion:</span>
+                            <p>
+                                Définit la version de l'API Kubernetes à
+                                utiliser pour créer cet objet.
+                            </p>
+                        </div>
+                        <div class="yaml-exp-item">
+                            <span class="keyword">kind:</span>
+                            <p>
+                                Le type de ressource que l'on souhaite créer
+                                (Pod, Service, Deployment...).
+                            </p>
+                        </div>
+                        <div class="yaml-exp-item">
+                            <span class="keyword">metadata:</span>
+                            <p>
+                                Données qui aident à identifier l'objet de
+                                manière unique (nom, labels, namespace).
+                            </p>
+                        </div>
+                        <div class="yaml-exp-item">
+                            <span class="keyword">spec:</span>
+                            <p>
+                                Le cœur du manifeste. Décrit l'état souhaité
+                                exact de la ressource (images, ports).
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: Le Pod -->
+        <div class="slide-container" id="slide14">
+            <div class="top-accent"></div>
+            <h2 class="slide-title">Le <span>Pod</span> : L'unité de base</h2>
+            <div class="content-area">
+                <div class="two-column" style="align-items: center">
+                    <div class="content-container">
+                        <div>
+                            <ul class="bullet-list">
+                                <li>
+                                    <strong>L'atome de K8s :</strong> Dans
+                                    Kubernetes, on ne déploie jamais un
+                                    conteneur seul, on déploie toujours un Pod.
+                                </li>
+                                <li>
+                                    <strong>Cohésion :</strong> Un Pod encapsule
+                                    un ou plusieurs conteneurs fortement couplés
+                                    (ex: une app principale + un conteneur de
+                                    logs "sidecar").
+                                </li>
+                                <li>
+                                    <strong>Partage :</strong> Les conteneurs
+                                    d'un même Pod partagent le même espace
+                                    réseau (une seule IP) et les mêmes volumes
+                                    de stockage.
+                                </li>
+                                <li>
+                                    <strong>Mortel :</strong> Les Pods sont
+                                    éphémères. S'ils meurent, on ne les réanime
+                                    pas, Kubernetes en crée de nouveaux.
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div
+                        class="image-container"
+                        style="
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            background: radial-gradient(
+                                circle,
+                                rgba(59, 130, 246, 0.15) 0%,
+                                #1f2937 80%
+                            );
+                            border: 1px solid rgba(59, 130, 246, 0.4);
+                            border-radius: 16px;
+                        "
+                    >
+                        <i
+                            class="fa-solid fa-box-open"
+                            style="
+                                font-size: 160px;
+                                color: #60a5fa;
+                                filter: drop-shadow(
+                                    0 0 25px rgba(59, 130, 246, 0.6)
+                                );
+                            "
+                        ></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 15: Deployments -->
+        <div class="slide-container" id="slide15">
+            <div class="top-accent"></div>
+            <h2 class="slide-title">
+                Gérer l'Échelle : Les <span>Deployments</span>
+            </h2>
+            <div class="content-area">
+                <div class="two-column" style="align-items: center; gap: 70px">
+                    <div class="content-container" style="width: 45%">
+                        <div class="deployment-hierarchy">
+                            <div class="dh-box">Deployment</div>
+                            <div class="dh-line-down" style="height: 40px">
+                                <div class="dh-arrow"></div>
+                            </div>
+                            <div class="dh-box rs">ReplicaSet</div>
+                            <div
+                                class="dh-line-down"
+                                style="height: 35px"
+                            ></div>
+                            <div class="dh-fork">
+                                <div class="dh-fork-horizontal"></div>
+                                <div class="dh-fork-legs">
+                                    <div class="dh-leg">
+                                        <div
+                                            class="dh-line-down"
+                                            style="height: 25px"
+                                        >
+                                            <div class="dh-arrow"></div>
+                                        </div>
+                                        <div class="dh-pod">Pod</div>
+                                    </div>
+                                    <div class="dh-leg">
+                                        <div
+                                            class="dh-line-down"
+                                            style="height: 25px"
+                                        >
+                                            <div class="dh-arrow"></div>
+                                        </div>
+                                        <div class="dh-pod">Pod</div>
+                                    </div>
+                                    <div class="dh-leg">
+                                        <div
+                                            class="dh-line-down"
+                                            style="height: 25px"
+                                        >
+                                            <div class="dh-arrow"></div>
+                                        </div>
+                                        <div class="dh-pod">Pod</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content-container" style="width: 55%">
+                        <h3
+                            style="
+                                font-size: 28px;
+                                margin-bottom: 10px;
+                                color: #f9fafb;
+                            "
+                        >
+                            Fonctionnalités clés :
+                        </h3>
+                        <ul class="comparison-list" style="gap: 25px">
+                            <li>
+                                <strong>Disponibilité :</strong> Garantit qu'un
+                                nombre exact de répliques tourne en permanence
+                                (géré via le ReplicaSet).
+                            </li>
+                            <li>
+                                <strong>Rolling Updates :</strong> Mise à jour
+                                progressive d'une nouvelle version d'image sans
+                                aucune coupure de service.
+                            </li>
+                            <li>
+                                <strong>Rollbacks :</strong> Retour en arrière
+                                immédiat et simplifié vers une version
+                                précédente en cas d'erreur de déploiement.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 16: Services -->
+        <div class="slide-container" id="slide16">
+            <div class="top-accent"></div>
+            <h2 class="slide-title">
+                Exposer une application : Les <span>Services</span>
+            </h2>
+            <div class="content-area">
+                <div class="tiled-content">
+                    <div class="tile">
+                        <div class="title-container">
+                            <div>
+                                <p class="main-title">ClusterIP</p>
+                                <p class="sub-title">Interne par défaut</p>
+                            </div>
+                            <span class="icon-container"
+                                ><i class="fa-solid fa-shield-alt"></i
+                            ></span>
+                        </div>
+                        <p>
+                            Expose le Service sur une IP interne au cluster.
+                            L'application est uniquement accessible depuis
+                            l'intérieur du cluster.
+                        </p>
+                    </div>
+                    <div class="tile">
+                        <div class="title-container">
+                            <div>
+                                <p class="main-title">NodePort</p>
+                                <p class="sub-title">Ouverture Statique</p>
+                            </div>
+                            <span class="icon-container"
+                                ><i class="fa-solid fa-door-open"></i
+                            ></span>
+                        </div>
+                        <p>
+                            Ouvre un port spécifique (entre 30000 et 32767) sur
+                            chaque nœud du cluster. Permet d'accéder à
+                            l'application depuis l'extérieur.
+                        </p>
+                    </div>
+                    <div class="tile">
+                        <div class="title-container">
+                            <div>
+                                <p class="main-title">LoadBalancer</p>
+                                <p class="sub-title">Trafic Externe</p>
+                            </div>
+                            <span class="icon-container"
+                                ><i class="fa-solid fa-cloud-upload-alt"></i
+                            ></span>
+                        </div>
+                        <p>
+                            Demande automatiquement la création d'un équilibreur
+                            de charge au fournisseur Cloud sous-jacent (AWS,
+                            Azure, GCP).
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 17: Ingress -->
+        <div class="slide-container" id="slide17">
+            <div class="top-accent"></div>
+            <h2 class="slide-title">Routage Avancé : <span>L'Ingress</span></h2>
+            <div class="content-area">
+                <div class="two-column" style="align-items: center; gap: 40px">
+                    <div class="content-container" style="width: 45%">
+                        <h3
+                            style="
+                                font-size: 28px;
+                                margin-bottom: 10px;
+                                color: #f9fafb;
+                            "
+                        >
+                            Le point d'entrée HTTP/S
+                        </h3>
+                        <p
+                            style="
+                                font-size: 20px;
+                                line-height: 1.6;
+                                color: #d1d5db;
+                                margin-bottom: 20px;
+                            "
+                        >
+                            L'Ingress gère les accès externes aux services dans
+                            un cluster en agissant comme un reverse proxy (ex:
+                            Nginx, Traefik).
+                        </p>
+                        <ul class="comparison-list" style="gap: 20px">
+                            <li>
+                                <strong>Routage intelligent :</strong> Dirige le
+                                trafic vers différents services selon le chemin
+                                (ex: <code>/api</code> vs <code>/web</code>).
+                            </li>
+                            <li>
+                                <strong>Virtual Hosting :</strong> Permet
+                                d'héberger plusieurs applications/domaines sur
+                                une seule adresse IP publique.
+                            </li>
+                            <li>
+                                <strong>Sécurité :</strong> Gère la terminaison
+                                SSL/TLS (les certificats HTTPS) de manière
+                                centralisée.
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="content-container" style="width: 55%">
+                        <div class="deployment-hierarchy" style="padding: 0">
+                            <!-- Client -->
+                            <div
+                                style="
+                                    font-size: 45px;
+                                    color: #9ca3af;
+                                    z-index: 2;
+                                "
+                            >
+                                <i class="fa-solid fa-laptop"></i>
+                                <span
+                                    style="
+                                        font-size: 18px;
+                                        font-family:
+                                            &quot;Montserrat&quot;, sans-serif;
+                                        font-weight: 600;
+                                        display: block;
+                                        margin-top: 5px;
+                                    "
+                                    >Client</span
+                                >
+                            </div>
+                            <div
+                                class="dh-line-down"
+                                style="height: 35px; background-color: #9ca3af"
+                            >
+                                <div
+                                    class="dh-arrow"
+                                    style="
+                                        border-color: #9ca3af transparent
+                                            transparent transparent;
+                                    "
+                                ></div>
+                            </div>
+
+                            <!-- Ingress -->
+                            <div
+                                class="dh-box"
+                                style="
+                                    background: linear-gradient(
+                                        135deg,
+                                        #4c1d95 0%,
+                                        #312e81 100%
+                                    );
+                                    border-color: #8b5cf6;
+                                    min-width: 320px;
+                                "
+                            >
+                                <div
+                                    style="font-size: 24px; margin-bottom: 10px"
+                                >
+                                    <i
+                                        class="fa-solid fa-route"
+                                        style="margin-right: 10px"
+                                    ></i
+                                    >Ingress
+                                </div>
+                                <div
+                                    style="
+                                        font-size: 15px;
+                                        font-family:
+                                            &quot;Fira Code&quot;, monospace;
+                                        color: #a7f3d0;
+                                        background: rgba(0, 0, 0, 0.4);
+                                        padding: 8px;
+                                        border-radius: 6px;
+                                    "
+                                >
+                                    host: my-app.com
+                                </div>
+                            </div>
+                            <div
+                                class="dh-line-down"
+                                style="height: 35px; background-color: #8b5cf6"
+                            >
+                                <div
+                                    class="dh-arrow"
+                                    style="
+                                        border-color: #8b5cf6 transparent
+                                            transparent transparent;
+                                    "
+                                ></div>
+                            </div>
+
+                            <!-- Service -->
+                            <div
+                                class="dh-box rs"
+                                style="min-width: 320px; padding: 15px 20px"
+                            >
+                                <i
+                                    class="fa-solid fa-shield-alt"
+                                    style="margin-right: 10px"
+                                ></i
+                                >Service
+                                <span
+                                    style="
+                                        font-size: 16px;
+                                        font-weight: normal;
+                                        opacity: 0.8;
+                                    "
+                                    >(ClusterIP)</span
+                                >
+                            </div>
+                            <div
+                                class="dh-line-down"
+                                style="height: 30px"
+                            ></div>
+
+                            <!-- Pods -->
+                            <div class="dh-fork">
+                                <div
+                                    class="dh-fork-horizontal"
+                                    style="width: 180px"
+                                ></div>
+                                <div class="dh-fork-legs" style="gap: 80px">
+                                    <div class="dh-leg">
+                                        <div
+                                            class="dh-line-down"
+                                            style="height: 25px"
+                                        >
+                                            <div class="dh-arrow"></div>
+                                        </div>
+                                        <div class="dh-pod">
+                                            <i
+                                                class="fa-solid fa-box"
+                                                style="margin-right: 8px"
+                                            ></i
+                                            >Pod
+                                        </div>
+                                    </div>
+                                    <div class="dh-leg">
+                                        <div
+                                            class="dh-line-down"
+                                            style="height: 25px"
+                                        >
+                                            <div class="dh-arrow"></div>
+                                        </div>
+                                        <div class="dh-pod">
+                                            <i
+                                                class="fa-solid fa-box"
+                                                style="margin-right: 8px"
+                                            ></i
+                                            >Pod
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 18: Stockage -->
+        <div class="slide-container" id="slide18">
+            <div class="top-accent"></div>
+            <h2 class="slide-title">Persistance du <span>Stockage</span></h2>
+            <p class="subtitle" style="margin-top: -30px; margin-bottom: 40px">
+                Les Pods sont éphémères, comment sauvegarder les données (Base
+                de données) ?
+            </p>
+            <div class="content-area">
+                <div class="two-column-tiled">
+                    <div class="tile">
+                        <div
+                            class="title-container"
+                            style="
+                                display: flex;
+                                align-items: center;
+                                gap: 15px;
+                                margin-bottom: 10px;
+                            "
+                        >
+                            <i
+                                class="fa-solid fa-hard-drive"
+                                style="color: #60a5fa; font-size: 32px"
+                            ></i>
+                            <h3 style="margin: 0">Persistent Volume (PV)</h3>
+                        </div>
+                        <p>
+                            <strong>La Ressource Physique :</strong> C'est un
+                            morceau de stockage dans le cluster (NFS, AWS EBS,
+                            Disque local) qui a été provisionné par un
+                            administrateur. Son cycle de vie est indépendant de
+                            tout Pod.
+                        </p>
+                    </div>
+                    <div class="tile accent-tile">
+                        <div
+                            class="title-container"
+                            style="
+                                display: flex;
+                                align-items: center;
+                                gap: 15px;
+                                margin-bottom: 10px;
+                            "
+                        >
+                            <i
+                                class="fa-solid fa-hand-holding-hand"
+                                style="color: #fb7185; font-size: 32px"
+                            ></i>
+                            <h3 style="margin: 0; color: #fb7185">
+                                Persistent Volume Claim (PVC)
+                            </h3>
+                        </div>
+                        <p>
+                            <strong>La Demande (Le ticket) :</strong> C'est une
+                            requête de stockage faite par un utilisateur/Pod
+                            (ex: "J'ai besoin de 5Go"). Kubernetes va chercher
+                            un PV libre qui correspond à cette demande et les
+                            lier (Bind).
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 19: Config & Isolation -->
+        <div class="slide-container" id="slide19">
+            <div class="top-accent"></div>
+            <h2 class="slide-title">Configuration & <span>Isolation</span></h2>
+            <div class="content-area">
+                <div class="tiled-content">
+                    <div class="tile">
+                        <div
+                            class="title-container"
+                            style="
+                                flex-direction: column;
+                                align-items: center;
+                                gap: 15px;
+                                width: 100%;
+                            "
+                        >
+                            <span
+                                class="icon-container"
+                                style="
+                                    width: 80px;
+                                    height: 80px;
+                                    font-size: 40px;
+                                "
+                                ><i class="fa-solid fa-folder-tree"></i
+                            ></span>
+                            <div style="text-align: center">
+                                <p class="main-title">Namespaces</p>
+                                <p class="sub-title">Les Murs</p>
+                            </div>
+                        </div>
+                        <p style="text-align: center; margin-top: 10px">
+                            Des clusters virtuels pour isoler et organiser vos
+                            ressources au sein d'un même cluster physique (ex:
+                            dev, staging, prod).
+                        </p>
+                    </div>
+
+                    <div class="tile">
+                        <div
+                            class="title-container"
+                            style="
+                                flex-direction: column;
+                                align-items: center;
+                                gap: 15px;
+                                width: 100%;
+                            "
+                        >
+                            <span
+                                class="icon-container"
+                                style="
+                                    width: 80px;
+                                    height: 80px;
+                                    font-size: 40px;
+                                "
+                                ><i class="fa-solid fa-file-lines"></i
+                            ></span>
+                            <div style="text-align: center">
+                                <p class="main-title">ConfigMaps</p>
+                                <p class="sub-title">La Configuration</p>
+                            </div>
+                        </div>
+                        <p style="text-align: center; margin-top: 10px">
+                            Externalise les variables d'environnement et les
+                            fichiers de configuration non sensibles hors de
+                            l'image Docker.
+                        </p>
+                    </div>
+
+                    <div class="tile">
+                        <div
+                            class="title-container"
+                            style="
+                                flex-direction: column;
+                                align-items: center;
+                                gap: 15px;
+                                width: 100%;
+                            "
+                        >
+                            <span
+                                class="icon-container"
+                                style="
+                                    width: 80px;
+                                    height: 80px;
+                                    font-size: 40px;
+                                "
+                                ><i class="fa-solid fa-lock"></i
+                            ></span>
+                            <div style="text-align: center">
+                                <p class="main-title">Secrets</p>
+                                <p class="sub-title">Données Sensibles</p>
+                            </div>
+                        </div>
+                        <p style="text-align: center; margin-top: 10px">
+                            Stocke de manière plus sécurisée les mots de passe,
+                            clés d'API et certificats (Les données sont encodées
+                            en Base64).
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 20: Helm -->
+        <div class="slide-container" id="slide20">
+            <div class="top-accent"></div>
+            <h2 class="slide-title">L'Écosystème : <span>Helm</span></h2>
+            <div class="content-area">
+                <div class="two-column" style="align-items: center">
+                    <div class="content-container">
+                        <div>
+                            <ul class="bullet-list">
+                                <li>
+                                    <strong>Le Package Manager :</strong> Helm
+                                    est à Kubernetes ce que <code>apt</code> est
+                                    à Ubuntu ou <code>npm</code> à Node.js.
+                                </li>
+                                <li>
+                                    <strong>Les Charts :</strong> Il regroupe
+                                    vos fichiers YAML (Deployments, Services,
+                                    Secrets) dans un format packagé appelé
+                                    "Chart".
+                                </li>
+                                <li>
+                                    <strong>Templates :</strong> Il permet de
+                                    rendre vos YAML dynamiques avec des
+                                    variables (ex: changer le port ou le tag
+                                    d'image selon l'environnement).
+                                </li>
+                                <li>
+                                    <strong>Déploiement Simplifié :</strong>
+                                    Installez des applications complexes (comme
+                                    Prometheus ou une base PostgreSQL complète)
+                                    en une seule commande :
+                                    <code class="cmd" style="margin-top: 5px"
+                                        >helm install bitnami/postgresql</code
+                                    >
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div
+                        class="image-container"
+                        style="
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            background: radial-gradient(
+                                circle,
+                                rgba(59, 130, 246, 0.15) 0%,
+                                #1f2937 80%
+                            );
+                            border: 1px solid rgba(59, 130, 246, 0.4);
+                            border-radius: 16px;
+                        "
+                    >
+                        <i
+                            class="fa-solid fa-ship"
+                            style="
+                                font-size: 180px;
+                                color: #60a5fa;
+                                filter: drop-shadow(
+                                    0 0 25px rgba(59, 130, 246, 0.6)
+                                );
+                            "
+                        ></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 21: Minikube -->
+        <div class="slide-container" id="slide21">
+            <div class="top-accent"></div>
+            <h2 class="slide-title">
+                L'Environnement Local : <span>Minikube</span>
+            </h2>
+            <div class="content-area">
+                <div class="two-column" style="align-items: center">
+                    <div class="content-container" style="width: 55%">
+                        <div class="styled-bullet-list" style="width: 100%">
+                            <ul style="gap: 20px">
+                                <li
+                                    style="
+                                        border-left-color: #3b82f6;
+                                        padding: 25px 30px;
+                                    "
+                                >
+                                    <div
+                                        class="icon-wrapper"
+                                        style="color: #60a5fa; margin-top: 0"
+                                    >
+                                        <i class="fa-solid fa-laptop-code"></i>
+                                    </div>
+                                    <div class="text-content">
+                                        <h3 style="color: #f9fafb">
+                                            Qu'est-ce que c'est ?
+                                        </h3>
+                                        <p>
+                                            Un outil qui implémente un cluster
+                                            Kubernetes local (sur un seul nœud)
+                                            directement sur votre machine
+                                            portable.
+                                        </p>
+                                    </div>
+                                </li>
+                                <li
+                                    style="
+                                        border-left-color: #3b82f6;
+                                        padding: 25px 30px;
+                                    "
+                                >
+                                    <div
+                                        class="icon-wrapper"
+                                        style="color: #60a5fa; margin-top: 0"
+                                    >
+                                        <i class="fa-solid fa-vial"></i>
+                                    </div>
+                                    <div class="text-content">
+                                        <h3 style="color: #f9fafb">Le but ?</h3>
+                                        <p>
+                                            Idéal pour l'apprentissage, les
+                                            tests et le développement quotidien
+                                            (Proof of Concept) avant de déployer
+                                            dans le Cloud.
+                                        </p>
+                                    </div>
+                                </li>
+                                <li
+                                    style="
+                                        border-left-color: #3b82f6;
+                                        padding: 25px 30px;
+                                    "
+                                >
+                                    <div
+                                        class="icon-wrapper"
+                                        style="color: #60a5fa; margin-top: 0"
+                                    >
+                                        <i class="fa-solid fa-terminal"></i>
+                                    </div>
+                                    <div class="text-content">
+                                        <h3 style="color: #f9fafb">
+                                            L'Outil de Commande
+                                        </h3>
+                                        <p>
+                                            Nous utiliserons
+                                            <code class="cmd">kubectl</code>
+                                            pour interagir avec l'API de notre
+                                            Minikube.
+                                        </p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div
+                        class="image-container"
+                        style="
+                            width: 45%;
+                            height: 400px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            background: radial-gradient(
+                                circle,
+                                rgba(59, 130, 246, 0.1) 0%,
+                                #1f2937 80%
+                            );
+                            border: 1px solid rgba(59, 130, 246, 0.4);
+                            border-radius: 16px;
+                        "
+                    >
+                        <i
+                            class="fa-solid fa-cubes"
+                            style="
+                                font-size: 150px;
+                                color: #3b82f6;
+                                filter: drop-shadow(
+                                    0 0 20px rgba(59, 130, 246, 0.4)
+                                );
+                            "
+                        ></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 22: Alternatives (K3s / MicroK8s) -->
+        <div class="slide-container" id="slide22">
+            <div class="top-accent"></div>
+            <h2 class="slide-title">
+                Les alternatives : <span>K3s & MicroK8s</span>
+            </h2>
+            <p class="subtitle" style="margin-top: -30px; margin-bottom: 40px">
+                D'autres distributions légères pour le développement local et
+                l'Edge computing.
+            </p>
+            <div class="content-area">
+                <div class="two-column-tiled">
+                    <div class="tile">
+                        <div class="title-container">
+                            <div>
+                                <h3 style="margin: 0">K3s</h3>
+                                <p
+                                    style="
+                                        margin-top: 5px;
+                                        color: #9ca3af;
+                                        font-size: 16px;
+                                        font-weight: 600;
+                                        text-transform: uppercase;
+                                        letter-spacing: 1px;
+                                    "
+                                >
+                                    Par Rancher (SUSE)
+                                </p>
+                            </div>
+                            <span class="icon-container"
+                                ><i class="fa-solid fa-feather-pointed"></i
+                            ></span>
+                        </div>
+                        <p>
+                            Une distribution Kubernetes certifiée et
+                            ultra-légère. Emballée dans un
+                            <strong>binaire unique de moins de 100 Mo</strong>.
+                            Parfaitement adaptée pour l'embarqué.
+                        </p>
+                        <p style="margin-top: auto; color: #9ca3af">
+                            <strong style="color: #60a5fa">🎯 Cibles :</strong>
+                            IoT, Edge computing, architectures ARM, et
+                            intégration CI/CD.
+                        </p>
+                    </div>
+                    <div class="tile accent-tile">
+                        <div class="title-container">
+                            <div>
+                                <h3 style="margin: 0">MicroK8s</h3>
+                                <p
+                                    style="
+                                        margin-top: 5px;
+                                        color: #9ca3af;
+                                        font-size: 16px;
+                                        font-weight: 600;
+                                        text-transform: uppercase;
+                                        letter-spacing: 1px;
+                                    "
+                                >
+                                    Par Canonical
+                                </p>
+                            </div>
+                            <span class="icon-container"
+                                ><i class="fa-brands fa-ubuntu"></i
+                            ></span>
+                        </div>
+                        <p>
+                            L'approche "Zero-Ops" de Kubernetes. S'installe en
+                            une seule commande via les paquets
+                            <strong>Snap</strong>. Très apprécié pour sa
+                            modularité grâce aux add-ons natifs.
+                        </p>
+                        <p style="margin-top: auto; color: #9ca3af">
+                            <strong style="color: #fb7185">🎯 Cibles :</strong>
+                            Développeurs en local, postes de travail Linux,
+                            appliances isolées, tests rapides.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 23: Troubleshooting Cheat Sheet -->
+        <div class="slide-container" id="slide23">
+            <div class="top-accent"></div>
+            <h2 class="slide-title">
+                Le Kit de Survie : <span class="bordeaux">Troubleshooting</span>
+            </h2>
+            <div class="content-area">
+                <div class="two-column" style="gap: 40px">
+                    <!-- TEXT SIDE -->
+                    <div class="content-container" style="width: 45%">
+                        <ul class="tp-list">
+                            <li>
+                                <h3>
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                    1. Inspecter
+                                </h3>
+                                <p>
+                                    Affiche les événements système (Events) qui
+                                    expliquent pourquoi K8s refuse de lancer le
+                                    pod (ex: Image introuvable).
+                                </p>
+                            </li>
+                            <li>
+                                <h3>
+                                    <i class="fa-solid fa-file-waveform"></i> 2.
+                                    Lire les logs
+                                </h3>
+                                <p>
+                                    Affiche la sortie standard de votre
+                                    conteneur (les erreurs de votre code).
+                                    Ajoutez <code>-f</code> pour le direct.
+                                </p>
+                            </li>
+                            <li>
+                                <h3>
+                                    <i class="fa-solid fa-door-open"></i> 3.
+                                    Entrer dedans
+                                </h3>
+                                <p>
+                                    Ouvre un terminal interactif à l'intérieur
+                                    du conteneur pour tester le réseau ou
+                                    vérifier un fichier.
+                                </p>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- TERMINAL SIDE -->
+                    <div
+                        class="content-container"
+                        style="width: 55%; margin: 0"
+                    >
+                        <div class="terminal-container">
+                            <div class="terminal-header">
+                                <div class="terminal-dots">
+                                    <span class="dot-red"></span
+                                    ><span class="dot-yellow"></span
+                                    ><span class="dot-green"></span>
+                                </div>
+                                <div class="terminal-title">bash - kubectl</div>
+                            </div>
+                            <div class="terminal-body">
+                                <span class="comment"
+                                    ># 1. Inspecter l'état et les events</span
+                                >
+                                <span class="prompt">$</span
+                                ><span class="command"
+                                    >kubectl describe pod
+                                    &lt;nom-du-pod&gt;</span
+                                >
+                                <br />
+                                <span class="comment"
+                                    ># 2. Afficher les logs applicatifs</span
+                                >
+                                <span class="prompt">$</span
+                                ><span class="command"
+                                    >kubectl logs &lt;nom-du-pod&gt;</span
+                                >
+                                <br />
+                                <span class="comment"
+                                    ># 3. Ouvrir un shell dans le
+                                    conteneur</span
+                                >
+                                <span class="prompt">$</span
+                                ><span class="command"
+                                    >kubectl exec -it &lt;nom-du-pod&gt; --
+                                    /bin/sh</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 24: Installation (1/2) -->
+        <div class="slide-container" id="slide24">
+            <div class="top-accent"></div>
+            <h2 class="slide-title">
+                Préparation (1/2) : <span class="bordeaux">Le Client</span>
+            </h2>
+            <div class="content-area">
+                <div class="two-column" style="gap: 40px">
+                    <!-- TEXT SIDE -->
+                    <div class="content-container" style="width: 45%">
+                        <ul class="tp-list">
+                            <li>
+                                <h3>
+                                    <i class="fa-brands fa-docker"></i> 1.
+                                    L'Hyperviseur (Prérequis)
+                                </h3>
+                                <p>
+                                    Assurez-vous qu'un moteur de conteneurs
+                                    (comme Docker Desktop) est installé et lancé
+                                    sur votre machine.
+                                </p>
+                            </li>
+                            <li>
+                                <h3>
+                                    <i class="fa-solid fa-terminal"></i> 2.
+                                    Installer kubectl
+                                </h3>
+                                <p>
+                                    Téléchargez l'outil en ligne de commande
+                                    indispensable pour communiquer avec l'API du
+                                    cluster.
+                                </p>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- TERMINAL SIDE -->
+                    <div
+                        class="content-container"
+                        style="width: 55%; margin: 0"
+                    >
+                        <div class="terminal-container">
+                            <div class="terminal-header">
+                                <div class="terminal-dots">
+                                    <span class="dot-red"></span
+                                    ><span class="dot-yellow"></span
+                                    ><span class="dot-green"></span>
+                                </div>
+                                <div class="terminal-title">bash - install</div>
+                            </div>
+                            <div class="terminal-body" style="font-size: 15px">
+                                <span class="comment"># Sous macOS</span>
+                                <span class="prompt">$</span
+                                ><span class="command"
+                                    >brew install kubectl</span
+                                >
+                                <br />
+                                <span class="comment"># Sous Windows</span>
+                                <span class="prompt">></span
+                                ><span class="command"
+                                    >winget install Kubernetes.kubectl</span
+                                >
+                                <br />
+                                <span class="comment"># Sous Linux</span>
+                                <span class="prompt">$</span
+                                ><span class="command"
+                                    >curl -LO "https://dl.k8s.io/release/$(curl
+                                    -L -s
+                                    https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"</span
+                                ><br />
+                                <span class="prompt">$</span
+                                ><span class="command"
+                                    >sudo install kubectl /usr/local/bin/</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 25: Installation (2/2) -->
+        <div class="slide-container" id="slide25">
+            <div class="top-accent"></div>
+            <h2 class="slide-title">
+                Préparation (2/2) : <span class="bordeaux">Minikube</span>
+            </h2>
+            <div class="content-area">
+                <div class="two-column" style="gap: 40px">
+                    <!-- TEXT SIDE -->
+                    <div class="content-container" style="width: 45%">
+                        <ul class="tp-list">
+                            <li>
+                                <h3>
+                                    <i class="fa-solid fa-box"></i> 3. Installer
+                                    Minikube
+                                </h3>
+                                <p>
+                                    Téléchargez l'outil qui va simuler et créer
+                                    le cluster K8s localement sur votre poste.
+                                </p>
+                            </li>
+                            <li>
+                                <h3>
+                                    <i class="fa-solid fa-check-circle"></i> 4.
+                                    Vérification
+                                </h3>
+                                <p>
+                                    Assurez-vous que l'installation s'est bien
+                                    déroulée et que les binaires sont
+                                    accessibles.
+                                </p>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- TERMINAL SIDE -->
+                    <div
+                        class="content-container"
+                        style="width: 55%; margin: 0"
+                    >
+                        <div class="terminal-container">
+                            <div class="terminal-header">
+                                <div class="terminal-dots">
+                                    <span class="dot-red"></span
+                                    ><span class="dot-yellow"></span
+                                    ><span class="dot-green"></span>
+                                </div>
+                                <div class="terminal-title">bash - install</div>
+                            </div>
+                            <div class="terminal-body" style="font-size: 15px">
+                                <span class="comment"># Sous macOS</span>
+                                <span class="prompt">$</span
+                                ><span class="command"
+                                    >brew install minikube</span
+                                >
+                                <br />
+                                <span class="comment"># Sous Windows</span>
+                                <span class="prompt">></span
+                                ><span class="command"
+                                    >winget install minikube</span
+                                >
+                                <br />
+                                <span class="comment"># Sous Linux</span>
+                                <span class="prompt">$</span
+                                ><span class="command"
+                                    >curl -LO
+                                    https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64</span
+                                ><br />
+                                <span class="prompt">$</span
+                                ><span class="command"
+                                    >sudo install minikube-linux-amd64
+                                    /usr/local/bin/minikube</span
+                                >
+                                <br />
+                                <span class="comment"
+                                    ># Vérification finale</span
+                                >
+                                <span class="prompt">$</span
+                                ><span class="command">minikube version</span
+                                ><br />
+                                <span class="prompt">$</span
+                                ><span class="command"
+                                    >kubectl version --client</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 26: Section_Title (TP Start) -->
+        <div class="slide-container" id="slide26">
+            <div class="top-accent"></div>
+            <div class="section-title-layout">
+                <h2>Travaux Pratiques <span class="bordeaux">(TP)</span></h2>
+                <hr />
+                <p>
+                    Ouvrez vos terminaux. Il est temps de mettre les mains dans
+                    le cambouis.
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 27: TP 1 (1/2) -->
+        <div class="slide-container" id="slide27">
+            <div class="top-accent"></div>
+            <h2 class="slide-title">
+                TP 1 (1/2) : <span class="bordeaux">Démarrage & Création</span>
+            </h2>
+            <div class="content-area">
+                <div class="two-column" style="gap: 40px">
+                    <!-- TEXT SIDE -->
+                    <div class="content-container" style="width: 45%">
+                        <ul class="tp-list">
+                            <li>
+                                <h3>
+                                    <i class="fa-solid fa-play"></i> 1.
+                                    Démarrage local
+                                </h3>
+                                <p>
+                                    Démarrez Minikube. Il va télécharger l'image
+                                    K8s et configurer automatiquement
+                                    <code>kubectl</code> pour vous.
+                                </p>
+                            </li>
+                            <li>
+                                <h3>
+                                    <i class="fa-solid fa-box"></i> 2. Lancement
+                                    du Pod
+                                </h3>
+                                <p>
+                                    Lancez un Pod Nginx en mode impératif
+                                    (commande directe) sans utiliser de fichier
+                                    YAML pour l'instant.
+                                </p>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- TERMINAL SIDE -->
+                    <div
+                        class="content-container"
+                        style="width: 55%; margin: 0"
+                    >
+                        <div class="terminal-container">
+                            <div class="terminal-header">
+                                <div class="terminal-dots">
+                                    <span class="dot-red"></span
+                                    ><span class="dot-yellow"></span
+                                    ><span class="dot-green"></span>
+                                </div>
+                                <div class="terminal-title">
+                                    bash - minikube
+                                </div>
+                            </div>
+                            <div class="terminal-body">
+                                <span class="comment"
+                                    ># 1. Démarrer le cluster</span
+                                >
+                                <span class="prompt">$</span
+                                ><span class="command">minikube start</span>
+                                <br />
+                                <span class="comment"
+                                    ># 2. Créer un pod simple</span
+                                >
+                                <span class="prompt">$</span
+                                ><span class="command"
+                                    >kubectl run mon-premier-pod
+                                    --image=nginx:alpine</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 28: TP 1 (2/2) -->
+        <div class="slide-container" id="slide28">
+            <div class="top-accent"></div>
+            <h2 class="slide-title">
+                TP 1 (2/2) :
+                <span class="bordeaux">Observation & Nettoyage</span>
+            </h2>
+            <div class="content-area">
+                <div class="two-column" style="gap: 40px">
+                    <!-- TEXT SIDE -->
+                    <div class="content-container" style="width: 45%">
+                        <ul class="tp-list">
+                            <li>
+                                <h3>
+                                    <i class="fa-solid fa-search"></i> 3.
+                                    Observation
+                                </h3>
+                                <p>
+                                    Vérifiez le statut global, puis analysez les
+                                    "Events" en détail pour voir les étapes de
+                                    création.
+                                </p>
+                            </li>
+                            <li>
+                                <h3>
+                                    <i class="fa-solid fa-trash-alt"></i> 4.
+                                    Nettoyage
+                                </h3>
+                                <p>
+                                    Supprimez le pod. Observez qu'il ne
+                                    réapparaît pas (car il n'y a pas de
+                                    Deployment pour le protéger).
+                                </p>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- TERMINAL SIDE -->
+                    <div
+                        class="content-container"
+                        style="width: 55%; margin: 0"
+                    >
+                        <div class="terminal-container">
+                            <div class="terminal-header">
+                                <div class="terminal-dots">
+                                    <span class="dot-red"></span
+                                    ><span class="dot-yellow"></span
+                                    ><span class="dot-green"></span>
+                                </div>
+                                <div class="terminal-title">
+                                    bash - minikube
+                                </div>
+                            </div>
+                            <div class="terminal-body">
+                                <span class="comment"
+                                    ># 3. Lister et inspecter</span
+                                >
+                                <span class="prompt">$</span
+                                ><span class="command">kubectl get pods</span
+                                ><br />
+                                <span class="prompt">$</span
+                                ><span class="command"
+                                    >kubectl describe pod mon-premier-pod</span
+                                >
+                                <br />
+                                <span class="comment"
+                                    ># 4. Supprimer le pod</span
+                                >
+                                <span class="prompt">$</span
+                                ><span class="command"
+                                    >kubectl delete pod mon-premier-pod</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 29: TP 2 (1/2) -->
+        <div class="slide-container" id="slide29">
+            <div class="top-accent"></div>
+            <h2 class="slide-title">
+                TP 2 (1/2) :
+                <span class="bordeaux">Workload & Scalabilité</span>
+            </h2>
+            <div class="content-area">
+                <div class="two-column" style="gap: 40px">
+                    <!-- TEXT SIDE -->
+                    <div class="content-container" style="width: 45%">
+                        <ul class="tp-list">
+                            <li>
+                                <h3>
+                                    <i class="fa-solid fa-layer-group"></i> 1.
+                                    Déploiement
+                                </h3>
+                                <p>
+                                    Au lieu d'un Pod isolé, créez un contrôleur
+                                    résilient qui maintiendra votre application
+                                    en vie.
+                                </p>
+                            </li>
+                            <li>
+                                <h3>
+                                    <i class="fa-solid fa-arrows-alt-h"></i> 2.
+                                    Scalabilité
+                                </h3>
+                                <p>
+                                    Augmentez le nombre de réplicas à 3 et
+                                    vérifiez la création instantanée des
+                                    nouveaux Pods.
+                                </p>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- TERMINAL SIDE -->
+                    <div
+                        class="content-container"
+                        style="width: 55%; margin: 0"
+                    >
+                        <div class="terminal-container">
+                            <div class="terminal-header">
+                                <div class="terminal-dots">
+                                    <span class="dot-red"></span
+                                    ><span class="dot-yellow"></span
+                                    ><span class="dot-green"></span>
+                                </div>
+                                <div class="terminal-title">
+                                    bash - minikube
+                                </div>
+                            </div>
+                            <div class="terminal-body">
+                                <span class="comment"
+                                    ># 1. Créer le Deployment</span
+                                >
+                                <span class="prompt">$</span
+                                ><span class="command"
+                                    >kubectl create deployment web-app
+                                    --image=nginx:alpine</span
+                                >
+                                <br />
+                                <span class="comment"
+                                    ># 2. Mettre à l'échelle (Scale)</span
+                                >
+                                <span class="prompt">$</span
+                                ><span class="command"
+                                    >kubectl scale deployment web-app
+                                    --replicas=3</span
+                                ><br />
+                                <span class="prompt">$</span
+                                ><span class="command">kubectl get pods</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 30: TP 2 (2/2) -->
+        <div class="slide-container" id="slide30">
+            <div class="top-accent"></div>
+            <h2 class="slide-title">
+                TP 2 (2/2) : <span class="bordeaux">Exposition réseau</span>
+            </h2>
+            <div class="content-area">
+                <div class="two-column" style="gap: 40px">
+                    <!-- TEXT SIDE -->
+                    <div class="content-container" style="width: 45%">
+                        <ul class="tp-list">
+                            <li>
+                                <h3>
+                                    <i class="fa-solid fa-globe"></i> 3. Service
+                                    NodePort
+                                </h3>
+                                <p>
+                                    Rendez l'application accessible depuis
+                                    l'extérieur du cluster via un port généré
+                                    aléatoirement.
+                                </p>
+                            </li>
+                            <li>
+                                <h3>
+                                    <i class="fa-solid fa-laptop-code"></i> 4.
+                                    Accès HTTP
+                                </h3>
+                                <p>
+                                    Utilisez l'utilitaire de Minikube pour créer
+                                    le tunnel réseau et ouvrir le site dans
+                                    votre navigateur.
+                                </p>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- TERMINAL SIDE -->
+                    <div
+                        class="content-container"
+                        style="width: 55%; margin: 0"
+                    >
+                        <div class="terminal-container">
+                            <div class="terminal-header">
+                                <div class="terminal-dots">
+                                    <span class="dot-red"></span
+                                    ><span class="dot-yellow"></span
+                                    ><span class="dot-green"></span>
+                                </div>
+                                <div class="terminal-title">
+                                    bash - minikube
+                                </div>
+                            </div>
+                            <div class="terminal-body">
+                                <span class="comment"
+                                    ># 3. Exposer le port cible</span
+                                >
+                                <span class="prompt">$</span
+                                ><span class="command"
+                                    >kubectl expose deployment web-app
+                                    --type=NodePort --port=80</span
+                                >
+                                <br />
+                                <span class="comment"
+                                    ># 4. Ouvrir le site web</span
+                                >
+                                <span class="prompt">$</span
+                                ><span class="command"
+                                    >minikube service web-app</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 31: TP 3 (1/2) -->
+        <div class="slide-container" id="slide31">
+            <div class="top-accent"></div>
+            <h2 class="slide-title">
+                TP 3 (1/2) : <span class="bordeaux">Interface Headlamp</span>
+            </h2>
+            <div class="content-area">
+                <div class="two-column" style="gap: 40px">
+                    <!-- TEXT SIDE -->
+                    <div class="content-container" style="width: 45%">
+                        <ul class="tp-list">
+                            <li>
+                                <h3>
+                                    <i class="fa-solid fa-download"></i> 1. YAML
+                                    distant
+                                </h3>
+                                <p>
+                                    Déployez ce Dashboard d'administration
+                                    directement depuis son dépôt officiel sur
+                                    GitHub.
+                                </p>
+                            </li>
+                            <li>
+                                <h3>
+                                    <i class="fa-solid fa-network-wired"></i> 2.
+                                    Port-Forward
+                                </h3>
+                                <p>
+                                    Créez un tunnel temporaire (qui bloquera ce
+                                    terminal) entre votre machine et le cluster.
+                                </p>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- TERMINAL SIDE -->
+                    <div
+                        class="content-container"
+                        style="width: 55%; margin: 0"
+                    >
+                        <div class="terminal-container">
+                            <div class="terminal-header">
+                                <div class="terminal-dots">
+                                    <span class="dot-red"></span
+                                    ><span class="dot-yellow"></span
+                                    ><span class="dot-green"></span>
+                                </div>
+                                <div class="terminal-title">
+                                    bash - minikube
+                                </div>
+                            </div>
+                            <div class="terminal-body" style="font-size: 15px">
+                                <span class="comment"
+                                    ># 1. Appliquer un manifeste distant</span
+                                >
+                                <span class="prompt">$</span
+                                ><span class="command"
+                                    >kubectl apply -f
+                                    https://raw.githubusercontent.com/headlamp-k8s/headlamp/main/kubernetes-headlamp.yaml</span
+                                >
+                                <br />
+                                <span class="comment"
+                                    ># 2. Créer le tunnel vers le Service</span
+                                >
+                                <span class="prompt">$</span
+                                ><span class="command"
+                                    >kubectl port-forward svc/headlamp 4000:80
+                                    -n kube-system</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 32: TP 3 (2/2) -->
+        <div class="slide-container" id="slide32">
+            <div class="top-accent"></div>
+            <h2 class="slide-title">
+                TP 3 (2/2) : <span class="bordeaux">Accès à l'Interface</span>
+            </h2>
+            <div class="content-area">
+                <div class="two-column" style="gap: 40px">
+                    <!-- TEXT SIDE -->
+                    <div class="content-container" style="width: 45%">
+                        <ul class="tp-list">
+                            <li>
+                                <h3>
+                                    <i class="fa-solid fa-key"></i> 3. Le Token
+                                </h3>
+                                <p>
+                                    Ouvrez un
+                                    <strong>nouveau terminal</strong> et générez
+                                    un jeton administrateur pour vous connecter.
+                                </p>
+                            </li>
+                            <li>
+                                <h3>
+                                    <i class="fa-solid fa-eye"></i> 4.
+                                    Visualisation
+                                </h3>
+                                <p>
+                                    Ouvrez votre navigateur, collez le token, et
+                                    admirez visuellement vos ressources !
+                                </p>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- TERMINAL SIDE -->
+                    <div
+                        class="content-container"
+                        style="width: 55%; margin: 0"
+                    >
+                        <div class="terminal-container">
+                            <div class="terminal-header">
+                                <div class="terminal-dots">
+                                    <span class="dot-red"></span
+                                    ><span class="dot-yellow"></span
+                                    ><span class="dot-green"></span>
+                                </div>
+                                <div class="terminal-title">
+                                    bash - minikube (Nouveau Tab)
+                                </div>
+                            </div>
+                            <div class="terminal-body">
+                                <span class="comment"
+                                    ># 3. Générer le jeton de sécurité</span
+                                >
+                                <span class="prompt">$</span
+                                ><span class="command"
+                                    >kubectl create token default</span
+                                >
+                                <br />
+                                <span class="comment"
+                                    ># 4. URL à ouvrir dans le navigateur</span
+                                >
+                                <span class="prompt">></span
+                                ><span class="command" style="color: #fcd34d"
+                                    >http://localhost:4000</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 33: Ressources et Sources -->
+        <div class="slide-container" id="slide33">
+            <div class="top-accent"></div>
+            <h2 class="slide-title">Ressources & <span>Sources</span></h2>
+            <div class="content-area">
+                <div class="styled-bullet-list" style="max-width: 100%">
+                    <ul>
+                        <li style="border-left-color: #3b82f6">
+                            <div class="icon-wrapper" style="color: #60a5fa">
+                                <i class="fa-solid fa-book-open-reader"></i>
+                            </div>
+                            <div class="text-content">
+                                <h3 style="color: #f9fafb">Stéphane Robert</h3>
+                                <p>
+                                    Ce workshop s'inspire grandement des
+                                    excellentes ressources, tutoriels et
+                                    vulgarisations proposés sur son blog :
+                                    <strong>blog.stephane-robert.info</strong>
+                                </p>
+                            </div>
+                        </li>
+                        <li style="border-left-color: #3b82f6">
+                            <div class="icon-wrapper" style="color: #60a5fa">
+                                <i class="fa-solid fa-globe"></i>
+                            </div>
+                            <div class="text-content">
+                                <h3 style="color: #f9fafb">
+                                    Documentation Officielle
+                                </h3>
+                                <p>
+                                    La référence absolue pour approfondir chaque
+                                    concept, API et commande :
+                                    <strong>kubernetes.io/docs</strong>
+                                </p>
+                            </div>
+                        </li>
+                        <li style="border-left-color: #3b82f6">
+                            <div class="icon-wrapper" style="color: #60a5fa">
+                                <i class="fa-brands fa-github"></i>
+                            </div>
+                            <div class="text-content">
+                                <h3 style="color: #f9fafb">
+                                    Retrouvez le code
+                                </h3>
+                                <p>
+                                    L'ensemble des manifestes YAML abordés
+                                    aujourd'hui est disponible sur mon GitHub :
+                                    <strong>github.com/hevzer</strong>
+                                </p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 34: Q&A -->
+        <div class="slide-container" id="slide34">
+            <div class="top-accent"></div>
+            <div class="qa-layout">
+                <h2>Questions <span class="bordeaux">?</span></h2>
+                <p>Fin de la session. Merci pour votre participation !</p>
+            </div>
+        </div>
+
+        <!-- PRESENTATION CONTROLS UI -->
+        <div id="slide-controls">
+            <div id="slide-counter">1 / 34</div>
+            <div id="controls-bar">
+                <button id="btn-prev" title="Previous (←)">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <button id="btn-next" title="Next (→)">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+                <button id="btn-fullscreen" title="Fullscreen (F)">
+                    <i class="fa-solid fa-expand"></i>
+                </button>
+            </div>
+            <div id="progress-bar"><div id="progress-fill"></div></div>
+        </div>
+
+        <!-- HELP OVERLAY -->
+        <div id="help-overlay">
+            <div id="help-content">
+                <h3
+                    style="
+                        color: #f9fafb;
+                        font-family: &quot;Montserrat&quot;, sans-serif;
+                        font-size: 28px;
+                        margin: 0 0 25px 0;
+                    "
+                >
+                    Raccourcis Clavier
+                </h3>
+                <div
+                    style="
+                        display: grid;
+                        grid-template-columns: auto 1fr;
+                        gap: 12px 20px;
+                        font-family: &quot;Inter&quot;, sans-serif;
+                    "
+                >
+                    <kbd>→</kbd><span>Slide suivante</span> <kbd>←</kbd
+                    ><span>Slide précédente</span> <kbd>Space</kbd
+                    ><span>Slide suivante</span> <kbd>F</kbd
+                    ><span>Plein écran</span> <kbd>Esc</kbd
+                    ><span>Quitter plein écran</span> <kbd>Home</kbd
+                    ><span>Première slide</span> <kbd>End</kbd
+                    ><span>Dernière slide</span> <kbd>?</kbd
+                    ><span>Aide (ce panneau)</span>
+                </div>
+                <p
+                    style="
+                        color: #6b7280;
+                        font-size: 14px;
+                        margin-top: 20px;
+                        font-family: &quot;Inter&quot;, sans-serif;
+                    "
+                >
+                    Cliquez n'importe où pour fermer
+                </p>
+            </div>
+        </div>
+
+        <style>
+            /* === PRESENTATION MODE === */
+            body.presentation-mode {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0;
+                gap: 0;
+                overflow: hidden;
+                height: 100vh;
+                background-color: #000;
+            }
+
+            body.presentation-mode .slide-container {
+                display: none;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform-origin: center center;
+                border-radius: 0;
+                box-shadow: none;
+            }
+
+            body.presentation-mode .slide-container.active-slide {
+                display: flex;
+            }
+
+            /* Controls */
+            #slide-controls {
+                display: none;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                z-index: 1000;
+                padding: 12px 24px;
+                background: linear-gradient(
+                    to top,
+                    rgba(0, 0, 0, 0.85) 0%,
+                    rgba(0, 0, 0, 0) 100%
+                );
+                align-items: center;
+                justify-content: space-between;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+                pointer-events: none;
+            }
+
+            body.presentation-mode #slide-controls {
+                display: flex;
+            }
+
+            #slide-controls:hover,
+            #slide-controls.visible {
+                opacity: 1;
+                pointer-events: all;
+            }
+
+            #slide-counter {
+                font-family: "Fira Code", monospace;
+                font-size: 15px;
+                color: #9ca3af;
+                min-width: 80px;
+            }
+
+            #controls-bar {
+                display: flex;
+                gap: 8px;
+            }
+
+            #controls-bar button {
+                background: rgba(255, 255, 255, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.15);
+                border-radius: 8px;
+                color: #d1d5db;
+                cursor: pointer;
+                font-size: 16px;
+                height: 40px;
+                width: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.15s ease;
+                backdrop-filter: blur(8px);
+            }
+
+            #controls-bar button:hover {
+                background: rgba(59, 130, 246, 0.3);
+                border-color: rgba(59, 130, 246, 0.5);
+                color: #f9fafb;
+            }
+
+            #progress-bar {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 3px;
+                background: rgba(255, 255, 255, 0.1);
+            }
+
+            #progress-fill {
+                height: 100%;
+                background: linear-gradient(90deg, #3b82f6, #e11d48);
+                transition: width 0.3s ease;
+                width: 0%;
+            }
+
+            /* Help overlay */
+            #help-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.8);
+                backdrop-filter: blur(8px);
+                z-index: 2000;
+                align-items: center;
+                justify-content: center;
+            }
+
+            #help-overlay.visible {
+                display: flex;
+            }
+
+            #help-content {
+                background: #1f2937;
+                border: 1px solid #374151;
+                border-radius: 16px;
+                padding: 40px;
+                max-width: 420px;
+            }
+
+            #help-content kbd {
+                background: #374151;
+                border: 1px solid #4b5563;
+                border-radius: 6px;
+                color: #60a5fa;
+                font-family: "Fira Code", monospace;
+                font-size: 14px;
+                padding: 4px 10px;
+                text-align: center;
+                min-width: 60px;
+                display: inline-block;
+            }
+
+            #help-content span {
+                color: #d1d5db;
+                font-size: 16px;
+                display: flex;
+                align-items: center;
+            }
+
+            /* Cursor hide on idle */
+            body.presentation-mode.cursor-hidden {
+                cursor: none;
+            }
+            body.presentation-mode.cursor-hidden #slide-controls {
+                opacity: 0 !important;
+                pointer-events: none !important;
+            }
+        </style>
+
+        <script>
+            (function () {
+                "use strict";
+
+                const slides = Array.from(
+                    document.querySelectorAll(".slide-container"),
+                );
+                const totalSlides = slides.length;
+                let currentSlide = 0;
+                let isPresentationMode = false;
+                let cursorTimer = null;
+
+                // DOM refs
+                const counter = document.getElementById("slide-counter");
+                const progressFill = document.getElementById("progress-fill");
+                const controls = document.getElementById("slide-controls");
+                const btnPrev = document.getElementById("btn-prev");
+                const btnNext = document.getElementById("btn-next");
+                const btnFullscreen = document.getElementById("btn-fullscreen");
+                const helpOverlay = document.getElementById("help-overlay");
+
+                function updateSlide() {
+                    slides.forEach((s, i) =>
+                        s.classList.toggle("active-slide", i === currentSlide),
+                    );
+                    counter.textContent =
+                        currentSlide + 1 + " / " + totalSlides;
+                    progressFill.style.width =
+                        ((currentSlide + 1) / totalSlides) * 100 + "%";
+                    scaleSlide();
+                    // Flash controls briefly
+                    controls.classList.add("visible");
+                    clearTimeout(controls._hideTimer);
+                    controls._hideTimer = setTimeout(
+                        () => controls.classList.remove("visible"),
+                        1500,
+                    );
+                }
+
+                function goTo(index) {
+                    if (index < 0) index = 0;
+                    if (index >= totalSlides) index = totalSlides - 1;
+                    currentSlide = index;
+                    updateSlide();
+                }
+
+                function next() {
+                    goTo(currentSlide + 1);
+                }
+                function prev() {
+                    goTo(currentSlide - 1);
+                }
+
+                function scaleSlide() {
+                    if (!isPresentationMode) return;
+                    const vw = window.innerWidth;
+                    const vh = window.innerHeight;
+                    const sw = 1280;
+                    const sh = 720;
+                    const scale = Math.min(vw / sw, vh / sh);
+                    slides.forEach((s) => {
+                        s.style.transform =
+                            "translate(-50%, -50%) scale(" + scale + ")";
+                    });
+                }
+
+                function enterPresentation() {
+                    isPresentationMode = true;
+                    document.body.classList.add("presentation-mode");
+                    updateSlide();
+                    window.addEventListener("resize", scaleSlide);
+                    resetCursorTimer();
+                }
+
+                function exitPresentation() {
+                    isPresentationMode = false;
+                    document.body.classList.remove(
+                        "presentation-mode",
+                        "cursor-hidden",
+                    );
+                    slides.forEach((s) => {
+                        s.classList.remove("active-slide");
+                        s.style.transform = "";
+                    });
+                    window.removeEventListener("resize", scaleSlide);
+                    clearTimeout(cursorTimer);
+                }
+
+                function toggleFullscreen() {
+                    if (!document.fullscreenElement) {
+                        document.documentElement
+                            .requestFullscreen()
+                            .then(() => {
+                                enterPresentation();
+                                btnFullscreen.innerHTML =
+                                    '<i class="fa-solid fa-compress"></i>';
+                            })
+                            .catch(() => {
+                                // Fallback: enter presentation mode without native fullscreen
+                                enterPresentation();
+                            });
+                    } else {
+                        document.exitFullscreen().then(() => {
+                            exitPresentation();
+                            btnFullscreen.innerHTML =
+                                '<i class="fa-solid fa-expand"></i>';
+                        });
+                    }
+                }
+
+                function resetCursorTimer() {
+                    document.body.classList.remove("cursor-hidden");
+                    clearTimeout(cursorTimer);
+                    cursorTimer = setTimeout(() => {
+                        if (isPresentationMode)
+                            document.body.classList.add("cursor-hidden");
+                    }, 3000);
+                }
+
+                // Auto-enter presentation mode on load
+                enterPresentation();
+
+                // Keyboard
+                document.addEventListener("keydown", function (e) {
+                    if (helpOverlay.classList.contains("visible")) {
+                        helpOverlay.classList.remove("visible");
+                        e.preventDefault();
+                        return;
+                    }
+
+                    switch (e.key) {
+                        case "ArrowRight":
+                        case " ":
+                        case "PageDown":
+                            e.preventDefault();
+                            next();
+                            break;
+                        case "ArrowLeft":
+                        case "PageUp":
+                            e.preventDefault();
+                            prev();
+                            break;
+                        case "Home":
+                            e.preventDefault();
+                            goTo(0);
+                            break;
+                        case "End":
+                            e.preventDefault();
+                            goTo(totalSlides - 1);
+                            break;
+                        case "f":
+                        case "F":
+                            e.preventDefault();
+                            toggleFullscreen();
+                            break;
+                        case "Escape":
+                            if (document.fullscreenElement) {
+                                // Browser handles ESC for fullscreen
+                            } else if (isPresentationMode) {
+                                exitPresentation();
+                            }
+                            break;
+                        case "?":
+                            e.preventDefault();
+                            helpOverlay.classList.toggle("visible");
+                            break;
+                    }
+                    if (isPresentationMode) resetCursorTimer();
+                });
+
+                // Mouse movement shows controls
+                document.addEventListener("mousemove", function () {
+                    if (isPresentationMode) resetCursorTimer();
+                });
+
+                // Click on help overlay to close
+                helpOverlay.addEventListener("click", function () {
+                    helpOverlay.classList.remove("visible");
+                });
+
+                // Buttons
+                btnPrev.addEventListener("click", function (e) {
+                    e.stopPropagation();
+                    prev();
+                });
+                btnNext.addEventListener("click", function (e) {
+                    e.stopPropagation();
+                    next();
+                });
+                btnFullscreen.addEventListener("click", function (e) {
+                    e.stopPropagation();
+                    toggleFullscreen();
+                });
+
+                // Fullscreen change event (handle ESC exiting fullscreen)
+                document.addEventListener("fullscreenchange", function () {
+                    if (!document.fullscreenElement && isPresentationMode) {
+                        exitPresentation();
+                        btnFullscreen.innerHTML =
+                            '<i class="fa-solid fa-expand"></i>';
+                    }
+                });
+
+                // URL hash support: #slide5
+                function readHash() {
+                    const match = window.location.hash.match(/^#slide(\d+)$/);
+                    if (match) goTo(parseInt(match[1], 10) - 1);
+                }
+                readHash();
+                window.addEventListener("hashchange", readHash);
+
+                // Touch support for mobile
+                let touchStartX = 0;
+                document.addEventListener(
+                    "touchstart",
+                    function (e) {
+                        touchStartX = e.changedTouches[0].screenX;
+                    },
+                    { passive: true },
+                );
+
+                document.addEventListener(
+                    "touchend",
+                    function (e) {
+                        const diff = e.changedTouches[0].screenX - touchStartX;
+                        if (Math.abs(diff) > 60) {
+                            if (diff < 0) next();
+                            else prev();
+                        }
+                    },
+                    { passive: true },
+                );
+            })();
+        </script>
+    </body>
+</html>
+```
