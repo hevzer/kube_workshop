@@ -3390,8 +3390,9 @@
                     <i class="fa-solid fa-expand"></i>
                 </button>
             </div>
-            <div id="progress-bar"><div id="progress-fill"></div></div>
         </div>
+
+        <div id="progress-bar"><div id="progress-fill"></div></div>
 
         <!-- HELP OVERLAY -->
         <div id="help-overlay">
@@ -3463,7 +3464,7 @@
                 display: flex;
             }
 
-            /* Controls */
+            /* Controls wrapper — subtle gradient scrim */
             #slide-controls {
                 display: none;
                 position: fixed;
@@ -3471,16 +3472,16 @@
                 left: 0;
                 right: 0;
                 z-index: 1000;
-                padding: 12px 24px;
+                padding: 24px 32px;
                 background: linear-gradient(
                     to top,
-                    rgba(0, 0, 0, 0.85) 0%,
+                    rgba(0, 0, 0, 0.5) 0%,
                     rgba(0, 0, 0, 0) 100%
                 );
                 align-items: center;
                 justify-content: space-between;
                 opacity: 0;
-                transition: opacity 0.3s ease;
+                transition: opacity 0.4s ease;
                 pointer-events: none;
             }
 
@@ -3494,54 +3495,155 @@
                 pointer-events: all;
             }
 
+            /* Slide counter — glass label pill */
             #slide-counter {
                 font-family: "Fira Code", monospace;
-                font-size: 15px;
-                color: #9ca3af;
-                min-width: 80px;
+                font-size: 12px;
+                color: rgba(210, 220, 240, 0.9);
+                min-width: 72px;
+                padding: 5px 13px;
+                /* Glass base */
+                background: linear-gradient(
+                    145deg,
+                    rgba(255, 255, 255, 0.10) 0%,
+                    rgba(255, 255, 255, 0.05) 50%,
+                    rgba(255, 255, 255, 0.08) 100%
+                );
+                backdrop-filter: blur(20px) saturate(160%) brightness(1.05);
+                -webkit-backdrop-filter: blur(20px) saturate(160%) brightness(1.05);
+                /* Beveled glass edge */
+                border: 1px solid transparent;
+                border-radius: 20px;
+                border-image: linear-gradient(
+                    145deg,
+                    rgba(255, 255, 255, 0.45) 0%,
+                    rgba(255, 255, 255, 0.15) 50%,
+                    rgba(255, 255, 255, 0.35) 100%
+                ) 1;
+                border-image-outset: 0;
+                /* Hack: border-image kills border-radius, use outline + box-shadow instead */
+                border: 1px solid rgba(255, 255, 255, 0.22);
+                box-shadow:
+                    0 4px 16px rgba(0, 0, 0, 0.25),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.30),
+                    inset 0 -1px 0 rgba(0, 0, 0, 0.12);
+                text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+                letter-spacing: 0.06em;
             }
 
+            /* ─── Liquid Glass Control Pill ─────────────────────── */
             #controls-bar {
                 display: flex;
-                gap: 8px;
+                gap: 2px;
+                padding: 5px;
+                border-radius: 22px;
+                position: relative;
+                isolation: isolate;
+
+                /* Multi-stop glass background — mimics uneven glass thickness */
+                background: linear-gradient(
+                    145deg,
+                    rgba(255, 255, 255, 0.12) 0%,
+                    rgba(255, 255, 255, 0.07) 20%,
+                    rgba(255, 255, 255, 0.03) 40%,
+                    rgba(255, 255, 255, 0.05) 60%,
+                    rgba(255, 255, 255, 0.09) 80%,
+                    rgba(255, 255, 255, 0.12) 100%
+                );
+
+                /* Deep glass blur + colour lift */
+                backdrop-filter: blur(40px) saturate(180%) brightness(1.08) contrast(1.05);
+                -webkit-backdrop-filter: blur(40px) saturate(180%) brightness(1.08) contrast(1.05);
+
+                /* Beveled glass edge with diagonal gradient */
+                border: 1px solid rgba(255, 255, 255, 0.22);
+
+                /* Multi-layer depth: ambient occlusion + side caustics + specular rim */
+                box-shadow:
+                    /* Outer drop shadow */
+                    0 12px 40px rgba(0, 0, 0, 0.40),
+                    0 4px 12px rgba(0, 0, 0, 0.30),
+                    /* Outer rim — faint white halo */
+                    0 0 0 1px rgba(255, 255, 255, 0.06),
+                    /* Top specular highlight — light hitting the glass rim */
+                    inset 0 2px 0 rgba(255, 255, 255, 0.35),
+                    /* Bottom inner shadow — glass thickness illusion */
+                    inset 0 -1px 0 rgba(0, 0, 0, 0.20),
+                    /* Left side caustic */
+                    inset 2px 0 4px rgba(255, 255, 255, 0.08),
+                    /* Right side caustic */
+                    inset -2px 0 4px rgba(255, 255, 255, 0.08);
             }
 
+            /* Specular sweep — top-left bright zone, like light raking across glass */
+            #controls-bar::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                border-radius: inherit;
+                background: linear-gradient(
+                    135deg,
+                    rgba(255, 255, 255, 0.22) 0%,
+                    rgba(255, 255, 255, 0.08) 30%,
+                    transparent 55%,
+                    rgba(255, 255, 255, 0.03) 100%
+                );
+                pointer-events: none;
+                z-index: 0;
+            }
+
+            /* Bottom inner refraction shimmer */
+            #controls-bar::after {
+                content: '';
+                position: absolute;
+                inset: 0;
+                border-radius: inherit;
+                background: linear-gradient(
+                    to bottom,
+                    transparent 55%,
+                    rgba(255, 255, 255, 0.07) 100%
+                );
+                pointer-events: none;
+                z-index: 0;
+            }
+
+            /* Buttons inside the liquid glass pill */
             #controls-bar button {
-                background: rgba(255, 255, 255, 0.1);
-                border: 1px solid rgba(255, 255, 255, 0.15);
-                border-radius: 8px;
-                color: #d1d5db;
+                background: transparent;
+                border: none;
+                border-radius: 16px;
+                color: rgba(225, 232, 248, 0.88);
                 cursor: pointer;
-                font-size: 16px;
-                height: 40px;
-                width: 40px;
+                font-size: 14px;
+                height: 34px;
+                width: 34px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                transition: all 0.15s ease;
-                backdrop-filter: blur(8px);
+                transition: background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease, transform 0.12s ease;
+                position: relative;
+                z-index: 1;
             }
 
             #controls-bar button:hover {
-                background: rgba(59, 130, 246, 0.3);
-                border-color: rgba(59, 130, 246, 0.5);
-                color: #f9fafb;
+                background: rgba(255, 255, 255, 0.14);
+                color: #ffffff;
+                box-shadow:
+                    0 2px 10px rgba(99, 150, 246, 0.20),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+                    inset 0 -1px 0 rgba(0, 0, 0, 0.10);
+            }
+
+            #controls-bar button:active {
+                background: rgba(99, 150, 246, 0.18);
+                transform: scale(0.92);
+                box-shadow:
+                    inset 0 1px 3px rgba(0, 0, 0, 0.15),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.20);
             }
 
             #progress-bar {
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                height: 3px;
-                background: rgba(255, 255, 255, 0.1);
-            }
-
-            #progress-fill {
-                height: 100%;
-                background: linear-gradient(90deg, #3b82f6, #e11d48);
-                transition: width 0.3s ease;
-                width: 0%;
+                display: none !important;
             }
 
             /* Help overlay */
@@ -3612,7 +3714,6 @@
 
                 // DOM refs
                 const counter = document.getElementById("slide-counter");
-                const progressFill = document.getElementById("progress-fill");
                 const controls = document.getElementById("slide-controls");
                 const btnPrev = document.getElementById("btn-prev");
                 const btnNext = document.getElementById("btn-next");
@@ -3625,9 +3726,8 @@
                     );
                     counter.textContent =
                         currentSlide + 1 + " / " + totalSlides;
-                    progressFill.style.width =
-                        ((currentSlide + 1) / totalSlides) * 100 + "%";
                     scaleSlide();
+
                     // Flash controls briefly
                     controls.classList.add("visible");
                     clearTimeout(controls._hideTimer);
