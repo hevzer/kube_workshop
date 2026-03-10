@@ -3495,6 +3495,11 @@
                 pointer-events: all;
             }
 
+            #slide-controls:hover ~ #progress-bar,
+            body.presentation-mode #progress-bar.visible {
+                opacity: 1;
+            }
+
             /* Slide counter — glass label pill */
             #slide-counter {
                 font-family: "Fira Code", monospace;
@@ -3642,8 +3647,66 @@
                     inset 0 1px 0 rgba(255, 255, 255, 0.20);
             }
 
+            /* ─── Liquid Glass Progress Bar ───────────────────── */
             #progress-bar {
-                display: none !important;
+                display: none;
+                position: fixed;
+                bottom: 24px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: min(480px, 60vw);
+                height: 14px;
+                border-radius: 10px;
+                z-index: 1000;
+                opacity: 0;
+                transition: opacity 0.4s ease;
+                pointer-events: none;
+
+                /* Glass pill track */
+                background: linear-gradient(
+                    145deg,
+                    rgba(255, 255, 255, 0.08) 0%,
+                    rgba(255, 255, 255, 0.04) 50%,
+                    rgba(255, 255, 255, 0.07) 100%
+                );
+                backdrop-filter: blur(20px) saturate(160%) brightness(1.05);
+                -webkit-backdrop-filter: blur(20px) saturate(160%) brightness(1.05);
+                border: 1px solid rgba(255, 255, 255, 0.18);
+                box-shadow:
+                    0 4px 16px rgba(0, 0, 0, 0.30),
+                    0 1px 4px rgba(0, 0, 0, 0.20),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.20),
+                    inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+            }
+
+            body.presentation-mode #progress-bar {
+                display: block;
+            }
+
+            #progress-bar.visible {
+                opacity: 1;
+            }
+
+            #progress-fill {
+                height: 100%;
+                border-radius: 10px;
+                width: 0%;
+                transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+                /* Glowing fill */
+                background: linear-gradient(
+                    90deg,
+                    rgba(99, 150, 246, 0.70) 0%,
+                    rgba(139, 180, 255, 0.90) 50%,
+                    rgba(99, 150, 246, 0.70) 100%
+                );
+                box-shadow:
+                    0 0 8px rgba(99, 150, 246, 0.60),
+                    0 0 2px rgba(180, 210, 255, 0.80),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+
+                position: relative;
+                overflow: hidden;
             }
 
             /* Help overlay */
@@ -3698,6 +3761,9 @@
                 opacity: 0 !important;
                 pointer-events: none !important;
             }
+            body.presentation-mode.cursor-hidden #progress-bar {
+                opacity: 0 !important;
+            }
         </style>
 
         <script>
@@ -3715,6 +3781,8 @@
                 // DOM refs
                 const counter = document.getElementById("slide-counter");
                 const controls = document.getElementById("slide-controls");
+                const progressBar = document.getElementById("progress-bar");
+                const progressFill = document.getElementById("progress-fill");
                 const btnPrev = document.getElementById("btn-prev");
                 const btnNext = document.getElementById("btn-next");
                 const btnFullscreen = document.getElementById("btn-fullscreen");
@@ -3728,11 +3796,19 @@
                         currentSlide + 1 + " / " + totalSlides;
                     scaleSlide();
 
+                    // Update progress fill
+                    const pct = ((currentSlide + 1) / totalSlides) * 100;
+                    progressFill.style.width = pct + "%";
+
                     // Flash controls briefly
                     controls.classList.add("visible");
+                    progressBar.classList.add("visible");
                     clearTimeout(controls._hideTimer);
                     controls._hideTimer = setTimeout(
-                        () => controls.classList.remove("visible"),
+                        () => {
+                            controls.classList.remove("visible");
+                            progressBar.classList.remove("visible");
+                        },
                         1500,
                     );
                 }
