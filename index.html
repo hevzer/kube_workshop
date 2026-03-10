@@ -14,6 +14,7 @@
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         />
+        <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
 
         <style>
             /* THE SETUP */
@@ -864,6 +865,30 @@
             .terminal-body .comment:first-child {
                 margin-top: 0;
             }
+            .mermaid {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+                overflow: visible;
+                min-height: 0;
+            }
+            .mermaid svg {
+                max-width: 100% !important;
+                max-height: inherit;
+                height: auto;
+            }
+            /* Safe text-only overrides — no geometry changes */
+            .mermaid .nodeLabel {
+                font-weight: 500 !important;
+            }
+            .mermaid .cluster-label .nodeLabel {
+                font-weight: 600 !important;
+                font-size: 14px !important;
+            }
+            .mermaid .edgeLabel {
+                font-weight: 500 !important;
+            }
         </style>
     </head>
     <body>
@@ -1459,13 +1484,35 @@
         <!-- Slide 9: Architecture -->
         <div class="slide-container" id="slide9">
             <div class="top-accent"></div>
-            <div class="section-title-layout">
-                <h2>L'Architecture du <span>Cluster</span></h2>
-                <hr />
-                <p>
-                    La séparation stricte entre le pilotage (Control Plane) et
-                    l'exécution (Worker Nodes).
-                </p>
+            <h2 class="slide-title">L'Architecture du <span>Cluster</span></h2>
+            <p class="subtitle" style="margin-top: -30px; margin-bottom: 40px">La séparation stricte entre le pilotage (Control Plane) et l'exécution (Worker Nodes).</p>
+            <div class="content-area" style="justify-content: center">
+                <div class="mermaid" style="width: 100%; display: flex; justify-content: center; max-height: 400px;">
+graph TB
+    subgraph CP["Control Plane"]
+        API["API Server"] --- ETCD["etcd"]
+        API --- SCHED["Scheduler"]
+        API --- CM["Ctrl Manager"]
+    end
+    API -->|kubectl| KL1["Kubelet"]
+    API -->|kubectl| KL2["Kubelet"]
+    subgraph W1["Worker 1"]
+        KL1 --- P1["Pod A"] & P2["Pod B"]
+    end
+    subgraph W2["Worker 2"]
+        KL2 --- P3["Pod C"] & P4["Pod D"]
+    end
+    style API fill:#1e3a5f,stroke:#3b82f6,color:#f1f5f9
+    style ETCD fill:#1e3a5f,stroke:#3b82f6,color:#f1f5f9
+    style SCHED fill:#1e3a5f,stroke:#3b82f6,color:#f1f5f9
+    style CM fill:#1e3a5f,stroke:#3b82f6,color:#f1f5f9
+    style KL1 fill:#1e293b,stroke:#64748b,color:#f1f5f9
+    style KL2 fill:#1e293b,stroke:#64748b,color:#f1f5f9
+    style P1 fill:#3b1d3f,stroke:#e11d48,color:#f1f5f9
+    style P2 fill:#3b1d3f,stroke:#e11d48,color:#f1f5f9
+    style P3 fill:#3b1d3f,stroke:#e11d48,color:#f1f5f9
+    style P4 fill:#3b1d3f,stroke:#e11d48,color:#f1f5f9
+                </div>
             </div>
         </div>
 
@@ -1889,8 +1936,100 @@
             </div>
         </div>
 
-        <!-- Slide 16: Services -->
+        <!-- Slide: Health Probes -->
         <div class="slide-container" id="slide16">
+            <div class="top-accent"></div>
+            <h2 class="slide-title">Surveiller la Santé : Les <span>Probes</span></h2>
+            <p class="subtitle" style="margin-top: -30px; margin-bottom: 40px">Comment Kubernetes sait si votre application fonctionne correctement ?</p>
+            <div class="content-area">
+                <div class="tiled-content">
+                    <div class="tile">
+                        <div class="title-container">
+                            <div>
+                                <p class="main-title">Liveness Probe</p>
+                                <p class="sub-title">Est-ce vivant ?</p>
+                            </div>
+                            <span class="icon-container"><i class="fa-solid fa-heartbeat"></i></span>
+                        </div>
+                        <p>Vérifie si le conteneur est toujours en vie. En cas d'échec, Kubernetes redémarre automatiquement le conteneur. Utile pour détecter les deadlocks.</p>
+                    </div>
+                    <div class="tile">
+                        <div class="title-container">
+                            <div>
+                                <p class="main-title">Readiness Probe</p>
+                                <p class="sub-title">Est-ce prêt ?</p>
+                            </div>
+                            <span class="icon-container"><i class="fa-solid fa-check-circle"></i></span>
+                        </div>
+                        <p>Vérifie si le conteneur est prêt à recevoir du trafic. En cas d'échec, le Pod est retiré du Service (plus de trafic entrant) sans être redémarré.</p>
+                    </div>
+                    <div class="tile accent-tile">
+                        <div class="title-container">
+                            <div>
+                                <p class="main-title">Startup Probe</p>
+                                <p class="sub-title">Démarrage lent ?</p>
+                            </div>
+                            <span class="icon-container"><i class="fa-solid fa-hourglass-half"></i></span>
+                        </div>
+                        <p>Protège les applications lentes au démarrage. Tant que la Startup Probe n'a pas réussi, les Liveness et Readiness Probes sont désactivées.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide: Other Workloads -->
+        <div class="slide-container" id="slide17">
+            <div class="top-accent"></div>
+            <h2 class="slide-title">Au-delà du Deployment : <span>Autres Workloads</span></h2>
+            <p class="subtitle" style="margin-top: -30px; margin-bottom: 40px">Kubernetes offre des contrôleurs spécialisés pour chaque type de charge de travail.</p>
+            <div class="content-area">
+                <div class="tiled-content" style="grid-template-columns: repeat(2, 1fr);">
+                    <div class="tile">
+                        <div class="title-container">
+                            <div>
+                                <p class="main-title">StatefulSet</p>
+                                <p class="sub-title">Applications avec état</p>
+                            </div>
+                            <span class="icon-container"><i class="fa-solid fa-database"></i></span>
+                        </div>
+                        <p>Pour les bases de données. Garantit un nom réseau stable, un stockage persistant unique par Pod, et un ordre de déploiement déterministe.</p>
+                    </div>
+                    <div class="tile">
+                        <div class="title-container">
+                            <div>
+                                <p class="main-title">DaemonSet</p>
+                                <p class="sub-title">Un Pod par nœud</p>
+                            </div>
+                            <span class="icon-container"><i class="fa-solid fa-clone"></i></span>
+                        </div>
+                        <p>Exécute exactement un Pod sur chaque nœud du cluster. Idéal pour les agents de monitoring, collecteurs de logs, ou proxys réseau.</p>
+                    </div>
+                    <div class="tile">
+                        <div class="title-container">
+                            <div>
+                                <p class="main-title">Job</p>
+                                <p class="sub-title">Tâche ponctuelle</p>
+                            </div>
+                            <span class="icon-container"><i class="fa-solid fa-flag-checkered"></i></span>
+                        </div>
+                        <p>Exécute une tâche jusqu'à complétion réussie (ex: migration de BDD, traitement batch). Le Pod n'est pas redémarré après succès.</p>
+                    </div>
+                    <div class="tile accent-tile">
+                        <div class="title-container">
+                            <div>
+                                <p class="main-title">CronJob</p>
+                                <p class="sub-title">Tâche planifiée</p>
+                            </div>
+                            <span class="icon-container"><i class="fa-solid fa-clock"></i></span>
+                        </div>
+                        <p>Comme un crontab Linux dans Kubernetes. Planifie l'exécution récurrente de Jobs (ex: backup quotidien, nettoyage hebdomadaire).</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 16: Services -->
+        <div class="slide-container" id="slide18">
             <div class="top-accent"></div>
             <h2 class="slide-title">
                 Exposer une application : Les <span>Services</span>
@@ -1946,11 +2085,31 @@
                         </p>
                     </div>
                 </div>
+                <div style="margin-top: 15px; display: flex; justify-content: center;">
+                    <div class="mermaid" style="width: 100%; max-height: 160px;">
+graph LR
+    EXT["Internet"] -->|LoadBalancer| LB["LoadBalancer :80"]
+    LB --> SVC["Service ClusterIP"]
+    DEV["Developpeur"] -->|"NodePort :30080"| NP["NodePort"]
+    NP --> SVC
+    SVC --> P1["Pod 1"]
+    SVC --> P2["Pod 2"]
+    SVC --> P3["Pod 3"]
+    style EXT fill:#3b1d3f,stroke:#e11d48,color:#f1f5f9
+    style DEV fill:#3b1d3f,stroke:#e11d48,color:#f1f5f9
+    style LB fill:#1e3a5f,stroke:#3b82f6,color:#f1f5f9
+    style NP fill:#1e3a5f,stroke:#3b82f6,color:#f1f5f9
+    style SVC fill:#1e3a5f,stroke:#3b82f6,color:#f1f5f9
+    style P1 fill:#134e4a,stroke:#14b8a6,color:#f1f5f9
+    style P2 fill:#134e4a,stroke:#14b8a6,color:#f1f5f9
+    style P3 fill:#134e4a,stroke:#14b8a6,color:#f1f5f9
+                    </div>
+                </div>
             </div>
         </div>
 
         <!-- Slide 17: Ingress -->
-        <div class="slide-container" id="slide17">
+        <div class="slide-container" id="slide19">
             <div class="top-accent"></div>
             <h2 class="slide-title">Routage Avancé : <span>L'Ingress</span></h2>
             <div class="content-area">
@@ -2150,8 +2309,46 @@
             </div>
         </div>
 
+        <!-- Slide: Network Fundamentals -->
+        <div class="slide-container" id="slide20">
+            <div class="top-accent"></div>
+            <h2 class="slide-title">Réseau : <span>Les Fondamentaux</span></h2>
+            <div class="content-area">
+                <div class="two-column" style="align-items: center; gap: 40px">
+                    <div class="content-container" style="width: 45%">
+                        <ul class="bullet-list">
+                            <li><strong>CNI (Container Network Interface) :</strong> Le plugin réseau (Calico, Flannel, Cilium) qui attribue une IP unique à chaque Pod et gère la communication inter-pods.</li>
+                            <li><strong>CoreDNS :</strong> Le serveur DNS interne du cluster. Résout automatiquement les noms de Services (ex: <code>my-svc.default.svc.cluster.local</code>).</li>
+                            <li><strong>NetworkPolicy :</strong> Des règles de pare-feu au niveau Pod. Contrôle quel Pod peut communiquer avec quel autre Pod ou avec l'extérieur.</li>
+                        </ul>
+                    </div>
+                    <div class="content-container" style="width: 55%; display: flex; justify-content: center;">
+                        <div class="mermaid" style="width: 100%; max-height: 250px;">
+graph TB
+    subgraph NS1["Namespace: frontend"]
+        FE["Pod Frontend"]
+    end
+    subgraph NS2["Namespace: backend"]
+        BE["Pod API"]
+        DB["Pod Database"]
+    end
+    FE -->|"Autorise (NetworkPolicy)"| BE
+    BE --> DB
+    FE -.->|"Bloque"| DB
+    DNS["CoreDNS"] -.->|Resolution| FE
+    DNS -.->|Resolution| BE
+    style FE fill:#1e3a5f,stroke:#3b82f6,color:#f1f5f9
+    style BE fill:#3b1d3f,stroke:#e11d48,color:#f1f5f9
+    style DB fill:#3b1d3f,stroke:#e11d48,color:#f1f5f9
+    style DNS fill:#1e293b,stroke:#64748b,color:#f1f5f9
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Slide 18: Stockage -->
-        <div class="slide-container" id="slide18">
+        <div class="slide-container" id="slide21">
             <div class="top-accent"></div>
             <h2 class="slide-title">Persistance du <span>Stockage</span></h2>
             <p class="subtitle" style="margin-top: -30px; margin-bottom: 40px">
@@ -2211,11 +2408,25 @@
                         </p>
                     </div>
                 </div>
+                <div style="margin-top: 15px; display: flex; justify-content: center;">
+                    <div class="mermaid" style="width: 100%; max-height: 160px;">
+graph LR
+    ADMIN["Admin"] -->|Cree| PV["PV 10Gi NFS"]
+    DEV["Dev"] -->|Demande| PVC["PVC 5Gi"]
+    PVC -->|Bind| PV
+    POD["Pod"] -->|Monte| PVC
+    style PV fill:#1e3a5f,stroke:#3b82f6,color:#f1f5f9
+    style PVC fill:#3b1d3f,stroke:#e11d48,color:#f1f5f9
+    style ADMIN fill:#1e293b,stroke:#64748b,color:#f1f5f9
+    style DEV fill:#1e293b,stroke:#64748b,color:#f1f5f9
+    style POD fill:#134e4a,stroke:#14b8a6,color:#f1f5f9
+                    </div>
+                </div>
             </div>
         </div>
 
         <!-- Slide 19: Config & Isolation -->
-        <div class="slide-container" id="slide19">
+        <div class="slide-container" id="slide22">
             <div class="top-accent"></div>
             <h2 class="slide-title">Configuration & <span>Isolation</span></h2>
             <div class="content-area">
@@ -2313,11 +2524,64 @@
                         </p>
                     </div>
                 </div>
+                <div style="margin-top: 15px; display: flex; justify-content: center;">
+                    <div class="mermaid" style="width: 100%; max-height: 160px;">
+graph LR
+    CM["ConfigMap app-config"] -->|envFrom| POD["Pod"]
+    SEC["Secret db-creds"] -->|volumeMount| POD
+    POD --> C1["Container"]
+    style CM fill:#1e3a5f,stroke:#3b82f6,color:#f1f5f9
+    style SEC fill:#3b1d3f,stroke:#e11d48,color:#f1f5f9
+    style POD fill:#134e4a,stroke:#14b8a6,color:#f1f5f9
+    style C1 fill:#1e293b,stroke:#64748b,color:#f1f5f9
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide: RBAC & ServiceAccounts -->
+        <div class="slide-container" id="slide23">
+            <div class="top-accent"></div>
+            <h2 class="slide-title">Sécurité : <span>RBAC &amp; ServiceAccounts</span></h2>
+            <p class="subtitle" style="margin-top: -30px; margin-bottom: 40px">Qui a le droit de faire quoi dans le cluster ?</p>
+            <div class="content-area">
+                <div class="tiled-content">
+                    <div class="tile">
+                        <div class="title-container">
+                            <div>
+                                <p class="main-title">ServiceAccount</p>
+                                <p class="sub-title">L'identité du Pod</p>
+                            </div>
+                            <span class="icon-container"><i class="fa-solid fa-id-badge"></i></span>
+                        </div>
+                        <p>Une identité attribuée aux Pods pour interagir avec l'API Kubernetes. Chaque namespace possède un ServiceAccount <code>default</code> automatique.</p>
+                    </div>
+                    <div class="tile">
+                        <div class="title-container">
+                            <div>
+                                <p class="main-title">Role / ClusterRole</p>
+                                <p class="sub-title">Les permissions</p>
+                            </div>
+                            <span class="icon-container"><i class="fa-solid fa-scroll"></i></span>
+                        </div>
+                        <p>Définit un ensemble de permissions (get, list, create, delete) sur des ressources. <strong>Role</strong> = dans un namespace, <strong>ClusterRole</strong> = global.</p>
+                    </div>
+                    <div class="tile accent-tile">
+                        <div class="title-container">
+                            <div>
+                                <p class="main-title">RoleBinding</p>
+                                <p class="sub-title">Le lien</p>
+                            </div>
+                            <span class="icon-container"><i class="fa-solid fa-link"></i></span>
+                        </div>
+                        <p>Lie un Role à un utilisateur ou ServiceAccount. C'est le lien entre « qui » et « quels droits ». Sans RoleBinding, aucun accès n'est accordé.</p>
+                    </div>
+                </div>
             </div>
         </div>
 
         <!-- Slide 20: Helm -->
-        <div class="slide-container" id="slide20">
+        <div class="slide-container" id="slide24">
             <div class="top-accent"></div>
             <h2 class="slide-title">L'Écosystème : <span>Helm</span></h2>
             <div class="content-area">
@@ -2385,7 +2649,7 @@
         </div>
 
         <!-- Slide 21: Minikube -->
-        <div class="slide-container" id="slide21">
+        <div class="slide-container" id="slide25">
             <div class="top-accent"></div>
             <h2 class="slide-title">
                 L'Environnement Local : <span>Minikube</span>
@@ -2501,7 +2765,7 @@
         </div>
 
         <!-- Slide 22: Alternatives (K3s / MicroK8s) -->
-        <div class="slide-container" id="slide22">
+        <div class="slide-container" id="slide26">
             <div class="top-accent"></div>
             <h2 class="slide-title">
                 Les alternatives : <span>K3s & MicroK8s</span>
@@ -2583,7 +2847,7 @@
         </div>
 
         <!-- Slide 23: Troubleshooting Cheat Sheet -->
-        <div class="slide-container" id="slide23">
+        <div class="slide-container" id="slide27">
             <div class="top-accent"></div>
             <h2 class="slide-title">
                 Le Kit de Survie : <span class="bordeaux">Troubleshooting</span>
@@ -2677,7 +2941,7 @@
         </div>
 
         <!-- Slide 24: Installation (1/2) -->
-        <div class="slide-container" id="slide24">
+        <div class="slide-container" id="slide28">
             <div class="top-accent"></div>
             <h2 class="slide-title">
                 Préparation (1/2) : <span class="bordeaux">Le Client</span>
@@ -2757,7 +3021,7 @@
         </div>
 
         <!-- Slide 25: Installation (2/2) -->
-        <div class="slide-container" id="slide25">
+        <div class="slide-container" id="slide29">
             <div class="top-accent"></div>
             <h2 class="slide-title">
                 Préparation (2/2) : <span class="bordeaux">Minikube</span>
@@ -2847,20 +3111,48 @@
         </div>
 
         <!-- Slide 26: Section_Title (TP Start) -->
-        <div class="slide-container" id="slide26">
+        <div class="slide-container" id="slide30">
             <div class="top-accent"></div>
-            <div class="section-title-layout">
-                <h2>Travaux Pratiques <span class="bordeaux">(TP)</span></h2>
-                <hr />
-                <p>
-                    Ouvrez vos terminaux. Il est temps de mettre les mains dans
-                    le cambouis.
-                </p>
+            <h2 class="slide-title">Travaux Pratiques <span class="bordeaux">(TP)</span></h2>
+            <p class="subtitle" style="margin-top: -30px; margin-bottom: 40px">Ouvrez vos terminaux. Il est temps de mettre les mains dans le cambouis.</p>
+            <div class="content-area">
+                <div class="tiled-content">
+                    <div class="tile">
+                        <div class="title-container">
+                            <div>
+                                <p class="main-title">TP 1 : Premiers Pas</p>
+                                <p class="sub-title">Pods & Cycle de vie</p>
+                            </div>
+                            <span class="icon-container"><i class="fa-solid fa-play"></i></span>
+                        </div>
+                        <p>Démarrer Minikube, créer votre premier Pod, observer son cycle de vie et le supprimer.</p>
+                    </div>
+                    <div class="tile">
+                        <div class="title-container">
+                            <div>
+                                <p class="main-title">TP 2 : Workloads</p>
+                                <p class="sub-title">Deployment & Service</p>
+                            </div>
+                            <span class="icon-container"><i class="fa-solid fa-layer-group"></i></span>
+                        </div>
+                        <p>Créer un Deployment résilient, scaler à 3 réplicas, et exposer l'application via un Service NodePort.</p>
+                    </div>
+                    <div class="tile accent-tile">
+                        <div class="title-container">
+                            <div>
+                                <p class="main-title">TP 3 : Dashboard</p>
+                                <p class="sub-title">Interface Headlamp</p>
+                            </div>
+                            <span class="icon-container"><i class="fa-solid fa-desktop"></i></span>
+                        </div>
+                        <p>Déployer une interface d'administration web, configurer un port-forward, et visualiser vos ressources.</p>
+                    </div>
+                </div>
             </div>
         </div>
 
         <!-- Slide 27: TP 1 (1/2) -->
-        <div class="slide-container" id="slide27">
+        <div class="slide-container" id="slide31">
             <div class="top-accent"></div>
             <h2 class="slide-title">
                 TP 1 (1/2) : <span class="bordeaux">Démarrage & Création</span>
@@ -2933,7 +3225,7 @@
         </div>
 
         <!-- Slide 28: TP 1 (2/2) -->
-        <div class="slide-container" id="slide28">
+        <div class="slide-container" id="slide32">
             <div class="top-accent"></div>
             <h2 class="slide-title">
                 TP 1 (2/2) :
@@ -3011,7 +3303,7 @@
         </div>
 
         <!-- Slide 29: TP 2 (1/2) -->
-        <div class="slide-container" id="slide29">
+        <div class="slide-container" id="slide33">
             <div class="top-accent"></div>
             <h2 class="slide-title">
                 TP 2 (1/2) :
@@ -3090,7 +3382,7 @@
         </div>
 
         <!-- Slide 30: TP 2 (2/2) -->
-        <div class="slide-container" id="slide30">
+        <div class="slide-container" id="slide34">
             <div class="top-accent"></div>
             <h2 class="slide-title">
                 TP 2 (2/2) : <span class="bordeaux">Exposition réseau</span>
@@ -3165,7 +3457,7 @@
         </div>
 
         <!-- Slide 31: TP 3 (1/2) -->
-        <div class="slide-container" id="slide31">
+        <div class="slide-container" id="slide35">
             <div class="top-accent"></div>
             <h2 class="slide-title">
                 TP 3 (1/2) : <span class="bordeaux">Interface Headlamp</span>
@@ -3240,7 +3532,7 @@
         </div>
 
         <!-- Slide 32: TP 3 (2/2) -->
-        <div class="slide-container" id="slide32">
+        <div class="slide-container" id="slide36">
             <div class="top-accent"></div>
             <h2 class="slide-title">
                 TP 3 (2/2) : <span class="bordeaux">Accès à l'Interface</span>
@@ -3312,7 +3604,7 @@
         </div>
 
         <!-- Slide 33: Ressources et Sources -->
-        <div class="slide-container" id="slide33">
+        <div class="slide-container" id="slide37">
             <div class="top-accent"></div>
             <h2 class="slide-title">Ressources & <span>Sources</span></h2>
             <div class="content-area">
@@ -3368,7 +3660,7 @@
         </div>
 
         <!-- Slide 34: Q&A -->
-        <div class="slide-container" id="slide34">
+        <div class="slide-container" id="slide38">
             <div class="top-accent"></div>
             <div class="qa-layout">
                 <h2>Questions <span class="bordeaux">?</span></h2>
@@ -3378,7 +3670,7 @@
 
         <!-- PRESENTATION CONTROLS UI -->
         <div id="slide-controls">
-            <div id="slide-counter">1 / 34</div>
+            <div id="slide-counter">1 / 38</div>
             <div id="controls-bar">
                 <button id="btn-prev" title="Previous (←)">
                     <i class="fa-solid fa-chevron-left"></i>
@@ -3881,6 +4173,60 @@
         </style>
 
         <script>
+            mermaid.initialize({ 
+                startOnLoad: false,
+                theme: 'dark',
+                themeVariables: {
+                    primaryColor: '#1e3a5f',
+                    primaryTextColor: '#f1f5f9',
+                    primaryBorderColor: '#3b82f6',
+                    lineColor: '#60a5fa',
+                    secondaryColor: '#2d1f3d',
+                    tertiaryColor: '#1a1a2e',
+                    mainBkg: '#1e293b',
+                    nodeBorder: '#3b82f6',
+                    clusterBkg: 'rgba(30, 58, 95, 0.3)',
+                    clusterBorder: 'rgba(59, 130, 246, 0.4)',
+                    edgeLabelBackground: 'rgba(17, 24, 39, 0.95)',
+                    nodeTextColor: '#f1f5f9',
+                    fontFamily: '"Inter", sans-serif',
+                    fontSize: '14px'
+                }
+            });
+
+            // Store original mermaid source before any processing
+            const mermaidSources = new Map();
+            document.querySelectorAll('.mermaid').forEach(function(el, i) {
+                mermaidSources.set(el, el.textContent.trim());
+            });
+
+            function renderMermaidInSlide(slideNum) {
+                const slide = document.getElementById('slide' + slideNum);
+                if (!slide) return;
+                const mermaids = slide.querySelectorAll('.mermaid');
+                if (mermaids.length === 0) return;
+                mermaids.forEach(function(el) {
+                    // Already rendered properly in a visible slide — skip
+                    if (el.getAttribute('data-mermaid-rendered') === 'true') return;
+                    // Reset to original source
+                    var src = mermaidSources.get(el);
+                    if (!src) return;
+                    el.removeAttribute('data-processed');
+                    el.innerHTML = src;
+                });
+                // Run mermaid on the now-visible slide
+                var toRender = Array.from(mermaids).filter(function(el) {
+                    return el.getAttribute('data-mermaid-rendered') !== 'true';
+                });
+                if (toRender.length > 0) {
+                    mermaid.run({ nodes: toRender }).then(function() {
+                        toRender.forEach(function(el) {
+                            el.setAttribute('data-mermaid-rendered', 'true');
+                        });
+                    });
+                }
+            }
+
             (function () {
                 "use strict";
 
@@ -4018,6 +4364,7 @@
 
                     counter.textContent =
                         currentSlide + 1 + " / " + totalSlides;
+                    renderMermaidInSlide(currentSlide + 1);
                     scaleSlide();
 
                     // Update progress fill
