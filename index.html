@@ -3386,6 +3386,13 @@
                 <button id="btn-next" title="Next (→)">
                     <i class="fa-solid fa-chevron-right"></i>
                 </button>
+                <button id="btn-laser" title="Laser (L)">
+                    <i class="fa-solid fa-circle-dot"></i>
+                </button>
+                <button id="btn-timer" title="Timer (T)">
+                    <i class="fa-solid fa-stopwatch"></i>
+                </button>
+                <span id="presenter-timer" style="display:none;">00:00</span>
                 <button id="btn-fullscreen" title="Fullscreen (F)">
                     <i class="fa-solid fa-expand"></i>
                 </button>
@@ -3393,6 +3400,10 @@
         </div>
 
         <div id="progress-bar"><div id="progress-fill"></div></div>
+
+        <!-- LASER POINTER -->
+        <canvas id="laser-canvas"></canvas>
+        <div id="laser-dot"></div>
 
         <!-- HELP OVERLAY -->
         <div id="help-overlay">
@@ -3421,8 +3432,12 @@
                     ><span>Plein écran</span> <kbd>Esc</kbd
                     ><span>Quitter plein écran</span> <kbd>Home</kbd
                     ><span>Première slide</span> <kbd>End</kbd
-                    ><span>Dernière slide</span> <kbd>?</kbd
+                    ><span>Dernière slide</span>                     <kbd>?</kbd
                     ><span>Aide (ce panneau)</span>
+                    <kbd>L</kbd
+                    ><span>Pointeur laser</span>
+                    <kbd>T</kbd
+                    ><span>Chronomètre</span>
                 </div>
                 <p
                     style="
@@ -3458,10 +3473,27 @@
                 transform-origin: center center;
                 border-radius: 0;
                 box-shadow: none;
+                opacity: 0;
             }
 
             body.presentation-mode .slide-container.active-slide {
                 display: flex;
+                animation: slide-fade-in 0.15s ease-out forwards;
+            }
+
+            body.presentation-mode .slide-container.slide-exit {
+                display: flex;
+                animation: slide-fade-out 0.1s ease-in forwards;
+            }
+
+            @keyframes slide-fade-in {
+                0%   { opacity: 0; filter: blur(4px); }
+                100% { opacity: 1; filter: blur(0); }
+            }
+
+            @keyframes slide-fade-out {
+                0%   { opacity: 1; filter: blur(0); }
+                100% { opacity: 0; filter: blur(4px); }
             }
 
             /* Controls wrapper — subtle gradient scrim */
@@ -3536,6 +3568,20 @@
                     inset 0 -1px 0 rgba(0, 0, 0, 0.12);
                 text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
                 letter-spacing: 0.06em;
+            }
+
+            /* Presenter timer — inline in controls bar */
+            #presenter-timer {
+                font-family: "Fira Code", monospace;
+                font-size: 11px;
+                color: rgba(210, 220, 240, 0.9);
+                padding: 0 8px;
+                display: flex;
+                align-items: center;
+                text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+                letter-spacing: 0.06em;
+                border-left: 1px solid rgba(255, 255, 255, 0.12);
+                margin-left: 2px;
             }
 
             /* ─── Liquid Glass Control Pill ─────────────────────── */
@@ -3649,6 +3695,14 @@
                     inset 0 1px 0 rgba(255, 255, 255, 0.20);
             }
 
+            #controls-bar button.btn-active {
+                background: rgba(99, 150, 246, 0.25);
+                color: #93bbff;
+                box-shadow:
+                    0 0 8px rgba(99, 150, 246, 0.30),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+            }
+
             /* ─── Liquid Glass Progress Bar ───────────────────── */
             #progress-bar {
                 display: none;
@@ -3692,6 +3746,7 @@
 
             #progress-bar:hover {
                 height: 20px;
+                cursor: pointer;
                 box-shadow:
                     0 6px 24px rgba(0, 0, 0, 0.40),
                     0 2px 8px rgba(0, 0, 0, 0.25),
@@ -3727,6 +3782,45 @@
 
                 position: relative;
                 overflow: hidden;
+            }
+
+            /* ─── Laser Pointer ───────────────────────────────── */
+            #laser-canvas {
+                display: none;
+                position: fixed;
+                inset: 0;
+                width: 100vw;
+                height: 100vh;
+                pointer-events: none;
+                z-index: 9998;
+            }
+
+            body.presentation-mode.laser-active #laser-canvas {
+                display: block;
+            }
+
+            #laser-dot {
+                display: none;
+                position: fixed;
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                background: radial-gradient(circle, #ff3333 0%, #cc0000 60%, transparent 100%);
+                box-shadow:
+                    0 0 8px 3px rgba(255, 40, 40, 0.7),
+                    0 0 20px 6px rgba(255, 40, 40, 0.3);
+                pointer-events: none;
+                z-index: 9999;
+                transform: translate(-50%, -50%);
+                transition: opacity 0.15s ease;
+            }
+
+            body.presentation-mode.laser-active #laser-dot {
+                display: block;
+            }
+
+            body.presentation-mode.laser-active {
+                cursor: none;
             }
 
             /* Help overlay */
@@ -3805,13 +3899,123 @@
                 const progressFill = document.getElementById("progress-fill");
                 const btnPrev = document.getElementById("btn-prev");
                 const btnNext = document.getElementById("btn-next");
+                const btnLaser = document.getElementById("btn-laser");
+                const btnTimer = document.getElementById("btn-timer");
                 const btnFullscreen = document.getElementById("btn-fullscreen");
                 const helpOverlay = document.getElementById("help-overlay");
+                const presenterTimer = document.getElementById("presenter-timer");
+                const laserDot = document.getElementById("laser-dot");
+                const laserCanvas = document.getElementById("laser-canvas");
+                const laserCtx = laserCanvas.getContext("2d");
+                let laserActive = false;
+                let laserTrail = [];
+                let laserRAF = null;
+
+                function resizeLaserCanvas() {
+                    laserCanvas.width = window.innerWidth;
+                    laserCanvas.height = window.innerHeight;
+                }
+
+                function drawLaserTrail() {
+                    if (!laserActive) return;
+                    laserCtx.clearRect(0, 0, laserCanvas.width, laserCanvas.height);
+
+                    var now = Date.now();
+                    // Remove points older than 400ms
+                    while (laserTrail.length > 0 && now - laserTrail[0].t > 400) {
+                        laserTrail.shift();
+                    }
+
+                    if (laserTrail.length > 1) {
+                        for (var i = 1; i < laserTrail.length; i++) {
+                            var age = (now - laserTrail[i].t) / 400; // 0 = new, 1 = old
+                            var alpha = (1 - age) * 0.6;
+                            var width = (1 - age) * 6 + 1;
+
+                            laserCtx.beginPath();
+                            laserCtx.moveTo(laserTrail[i - 1].x, laserTrail[i - 1].y);
+                            laserCtx.lineTo(laserTrail[i].x, laserTrail[i].y);
+                            laserCtx.strokeStyle = "rgba(255, 50, 50, " + alpha + ")";
+                            laserCtx.lineWidth = width;
+                            laserCtx.lineCap = "round";
+                            laserCtx.shadowColor = "rgba(255, 40, 40, " + alpha * 0.8 + ")";
+                            laserCtx.shadowBlur = 8;
+                            laserCtx.stroke();
+                        }
+                    }
+
+                    laserRAF = requestAnimationFrame(drawLaserTrail);
+                }
+
+                function startLaserTrail() {
+                    resizeLaserCanvas();
+                    laserTrail = [];
+                    laserRAF = requestAnimationFrame(drawLaserTrail);
+                }
+
+                function stopLaserTrail() {
+                    if (laserRAF) { cancelAnimationFrame(laserRAF); laserRAF = null; }
+                    laserTrail = [];
+                    laserCtx.clearRect(0, 0, laserCanvas.width, laserCanvas.height);
+                }
+                let timerActive = false;
+                let timerStart = null;
+                let timerInterval = null;
+
+                function startTimer() {
+                    timerStart = Date.now();
+                    presenterTimer.style.display = '';
+                    presenterTimer.textContent = '00:00';
+                    timerInterval = setInterval(function () {
+                        var elapsed = Math.floor((Date.now() - timerStart) / 1000);
+                        var m = String(Math.floor(elapsed / 60)).padStart(2, '0');
+                        var s = String(elapsed % 60).padStart(2, '0');
+                        presenterTimer.textContent = m + ':' + s;
+                    }, 1000);
+                }
+
+                function stopTimer() {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                    presenterTimer.style.display = 'none';
+                }
+
+                function toggleLaser() {
+                    laserActive = !laserActive;
+                    document.body.classList.toggle("laser-active", laserActive);
+                    btnLaser.classList.toggle("btn-active", laserActive);
+                    if (laserActive) { startLaserTrail(); }
+                    else { stopLaserTrail(); }
+                }
+
+                function toggleTimerFn() {
+                    timerActive = !timerActive;
+                    btnTimer.classList.toggle("btn-active", timerActive);
+                    if (timerActive) { startTimer(); }
+                    else { stopTimer(); }
+                }
 
                 function updateSlide() {
-                    slides.forEach((s, i) =>
-                        s.classList.toggle("active-slide", i === currentSlide),
-                    );
+                    // Animate exit on previously active slide
+                    const prev = document.querySelector('.slide-container.active-slide');
+                    if (prev && prev !== slides[currentSlide]) {
+                        prev.classList.remove('active-slide');
+                        prev.classList.add('slide-exit');
+                        prev.addEventListener('animationend', function handler() {
+                            prev.classList.remove('slide-exit');
+                            prev.removeEventListener('animationend', handler);
+                        });
+                    }
+
+                    slides.forEach((s, i) => {
+                        if (i === currentSlide) {
+                            s.classList.remove('slide-exit');
+                            s.classList.add('active-slide');
+                        } else if (!s.classList.contains('slide-exit')) {
+                            s.classList.remove('active-slide');
+                        }
+                    });
+
                     counter.textContent =
                         currentSlide + 1 + " / " + totalSlides;
                     scaleSlide();
@@ -3865,6 +4069,7 @@
                     document.body.classList.add("presentation-mode");
                     updateSlide();
                     window.addEventListener("resize", scaleSlide);
+                    window.addEventListener("resize", resizeLaserCanvas);
                     resetCursorTimer();
                 }
 
@@ -3879,7 +4084,10 @@
                         s.style.transform = "";
                     });
                     window.removeEventListener("resize", scaleSlide);
+                    window.removeEventListener("resize", resizeLaserCanvas);
                     clearTimeout(cursorTimer);
+                    if (timerActive) { timerActive = false; stopTimer(); btnTimer.classList.remove("btn-active"); }
+                    if (laserActive) { laserActive = false; stopLaserTrail(); document.body.classList.remove("laser-active"); btnLaser.classList.remove("btn-active"); }
                 }
 
                 function toggleFullscreen() {
@@ -3960,19 +4168,35 @@
                             e.preventDefault();
                             helpOverlay.classList.toggle("visible");
                             break;
+                        case "l":
+                        case "L":
+                            e.preventDefault();
+                            toggleLaser();
+                            break;
+                        case "t":
+                        case "T":
+                            e.preventDefault();
+                            toggleTimerFn();
+                            break;
                     }
                     if (isPresentationMode) resetCursorTimer();
                 });
 
                 // Mouse movement — only reset cursor hide timer, NOT show controls
-                document.addEventListener("mousemove", function () {
+                document.addEventListener("mousemove", function (e) {
                     if (isPresentationMode) {
                         document.body.classList.remove("cursor-hidden");
                         clearTimeout(cursorTimer);
                         cursorTimer = setTimeout(() => {
-                            if (isPresentationMode)
+                            if (isPresentationMode && !laserActive)
                                 document.body.classList.add("cursor-hidden");
                         }, 3000);
+
+                        if (laserActive) {
+                            laserDot.style.left = e.clientX + "px";
+                            laserDot.style.top = e.clientY + "px";
+                            laserTrail.push({ x: e.clientX, y: e.clientY, t: Date.now() });
+                        }
                     }
                 });
 
@@ -3993,6 +4217,23 @@
                 btnFullscreen.addEventListener("click", function (e) {
                     e.stopPropagation();
                     toggleFullscreen();
+                });
+                btnLaser.addEventListener("click", function (e) {
+                    e.stopPropagation();
+                    toggleLaser();
+                });
+                btnTimer.addEventListener("click", function (e) {
+                    e.stopPropagation();
+                    toggleTimerFn();
+                });
+
+                // Click on progress bar to jump to slide
+                progressBar.addEventListener("click", function (e) {
+                    e.stopPropagation();
+                    var rect = progressBar.getBoundingClientRect();
+                    var pct = (e.clientX - rect.left) / rect.width;
+                    var target = Math.round(pct * (totalSlides - 1));
+                    goTo(target);
                 });
 
                 // Fullscreen change event (handle ESC exiting fullscreen)
