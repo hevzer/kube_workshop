@@ -3487,16 +3487,18 @@
 
             body.presentation-mode #slide-controls {
                 display: flex;
+                pointer-events: all;  /* always interactive so :hover fires */
             }
 
             #slide-controls:hover,
             #slide-controls.visible {
                 opacity: 1;
-                pointer-events: all;
             }
 
+            /* Show progress bar when hovering controls OR progress bar itself */
             #slide-controls:hover ~ #progress-bar,
-            body.presentation-mode #progress-bar.visible {
+            body.presentation-mode #progress-bar.visible,
+            body.presentation-mode #progress-bar:hover {
                 opacity: 1;
             }
 
@@ -3659,7 +3661,7 @@
                 border-radius: 10px;
                 z-index: 1000;
                 opacity: 0;
-                transition: opacity 0.4s ease;
+                transition: opacity 0.4s ease, height 0.25s ease, box-shadow 0.25s ease;
                 pointer-events: none;
 
                 /* Glass pill track */
@@ -3681,10 +3683,28 @@
 
             body.presentation-mode #progress-bar {
                 display: block;
+                pointer-events: all;
             }
 
             #progress-bar.visible {
                 opacity: 1;
+            }
+
+            #progress-bar:hover {
+                height: 20px;
+                box-shadow:
+                    0 6px 24px rgba(0, 0, 0, 0.40),
+                    0 2px 8px rgba(0, 0, 0, 0.25),
+                    0 0 0 1px rgba(255, 255, 255, 0.10),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.30),
+                    inset 0 -1px 0 rgba(0, 0, 0, 0.20);
+            }
+
+            #progress-bar:hover #progress-fill {
+                box-shadow:
+                    0 0 14px rgba(99, 150, 246, 0.80),
+                    0 0 4px rgba(180, 210, 255, 0.90),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.55);
             }
 
             #progress-fill {
@@ -3944,9 +3964,16 @@
                     if (isPresentationMode) resetCursorTimer();
                 });
 
-                // Mouse movement shows controls
+                // Mouse movement — only reset cursor hide timer, NOT show controls
                 document.addEventListener("mousemove", function () {
-                    if (isPresentationMode) resetCursorTimer();
+                    if (isPresentationMode) {
+                        document.body.classList.remove("cursor-hidden");
+                        clearTimeout(cursorTimer);
+                        cursorTimer = setTimeout(() => {
+                            if (isPresentationMode)
+                                document.body.classList.add("cursor-hidden");
+                        }, 3000);
+                    }
                 });
 
                 // Click on help overlay to close
@@ -3970,8 +3997,8 @@
 
                 // Fullscreen change event (handle ESC exiting fullscreen)
                 document.addEventListener("fullscreenchange", function () {
-                    if (!document.fullscreenElement && isPresentationMode) {
-                        exitPresentation();
+                    if (!document.fullscreenElement) {
+                        // Native fullscreen exited (e.g. via ESC) — stay in presentation mode
                         btnFullscreen.innerHTML =
                             '<i class="fa-solid fa-expand"></i>';
                     }
