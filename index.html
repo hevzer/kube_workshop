@@ -2066,11 +2066,11 @@ graph LR
             </div>
         </div>
 
-        <!-- Slide 24: Installation (1/2) -->
+        <!-- Slide 28: Installation Docker -->
         <div class="slide-container" id="slide28">
             <div class="top-accent"></div>
             <h2 class="slide-title">
-                Préparation (1/2) : <span class="bordeaux">Le Client</span>
+                Préparation : <span class="bordeaux">Docker</span>
             </h2>
             <div class="content-area">
                 <div class="two-column" style="gap: 40px">
@@ -2079,66 +2079,29 @@ graph LR
                         <ul class="tp-list">
                             <li>
                                 <h3>
-                                    <i class="fa-brands fa-docker"></i> 1.
-                                    L'Hyperviseur (Prérequis)
+                                    <i class="fa-brands fa-docker"></i>
+                                    Installation Docker
                                 </h3>
                                 <p>
-                                    Assurez-vous qu'un moteur de conteneurs
-                                    (comme Docker Desktop) est installé et lancé
-                                    sur votre machine.
-                                </p>
-                            </li>
-                            <li>
-                                <h3>
-                                    <i class="fa-solid fa-terminal"></i> 2.
-                                    Installer kubectl
-                                </h3>
-                                <p>
-                                    Téléchargez l'outil en ligne de commande
-                                    indispensable pour communiquer avec l'API du
-                                    cluster.
+                                    Le moteur de conteneurs, prérequis
+                                    indispensable pour faire tourner Minikube et
+                                    vos images.
                                 </p>
                             </li>
                         </ul>
                     </div>
                     <!-- TERMINAL SIDE -->
-                    <div
-                        class="content-container"
-                        style="width: 55%; margin: 0"
-                    >
+                    <div class="content-container" style="width: 55%; margin: 0">
                         <div class="terminal-container">
                             <div class="terminal-header">
                                 <div class="terminal-dots">
-                                    <span class="dot-red"></span
-                                    ><span class="dot-yellow"></span
-                                    ><span class="dot-green"></span>
+                                    <span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span>
                                 </div>
                                 <div class="terminal-title">bash - install</div>
                             </div>
                             <div class="terminal-body" style="font-size: 15px">
-                                <span class="comment"># Sous macOS</span>
-                                <span class="prompt">$</span
-                                ><span class="command"
-                                    >brew install kubectl</span
-                                >
-                                <br />
-                                <span class="comment"># Sous Windows</span>
-                                <span class="prompt">></span
-                                ><span class="command"
-                                    >winget install Kubernetes.kubectl</span
-                                >
-                                <br />
-                                <span class="comment"># Sous Linux</span>
-                                <span class="prompt">$</span
-                                ><span class="command"
-                                    >curl -LO "https://dl.k8s.io/release/$(curl
-                                    -L -s
-                                    https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"</span
-                                ><br />
-                                <span class="prompt">$</span
-                                ><span class="command"
-                                    >sudo install kubectl /usr/local/bin/</span
-                                >
+                                <span class="comment"># Installation de Docker</span>
+                                <span class="prompt">$</span><span class="command">curl -fsSL https://get.docker.com | sudo sh</span>
                             </div>
                         </div>
                     </div>
@@ -2146,11 +2109,11 @@ graph LR
             </div>
         </div>
 
-        <!-- Slide 25: Installation (2/2) -->
+        <!-- Slide 29: Installation kubectl -->
         <div class="slide-container" id="slide29">
             <div class="top-accent"></div>
             <h2 class="slide-title">
-                Préparation (2/2) : <span class="bordeaux">Minikube</span>
+                Préparation : <span class="bordeaux">kubectl</span>
             </h2>
             <div class="content-area">
                 <div class="two-column" style="gap: 40px">
@@ -2159,76 +2122,32 @@ graph LR
                         <ul class="tp-list">
                             <li>
                                 <h3>
-                                    <i class="fa-solid fa-box"></i> 3. Installer
-                                    Minikube
+                                    <i class="fa-solid fa-terminal"></i>
+                                    Installation kubectl
                                 </h3>
                                 <p>
-                                    Téléchargez l'outil qui va simuler et créer
-                                    le cluster K8s localement sur votre poste.
-                                </p>
-                            </li>
-                            <li>
-                                <h3>
-                                    <i class="fa-solid fa-check-circle"></i> 4.
-                                    Vérification
-                                </h3>
-                                <p>
-                                    Assurez-vous que l'installation s'est bien
-                                    déroulée et que les binaires sont
-                                    accessibles.
+                                    L'outil CLI indispensable pour communiquer
+                                    avec l'API Server de votre cluster
+                                    Kubernetes.
                                 </p>
                             </li>
                         </ul>
                     </div>
                     <!-- TERMINAL SIDE -->
-                    <div
-                        class="content-container"
-                        style="width: 55%; margin: 0"
-                    >
+                    <div class="content-container" style="width: 55%; margin: 0">
                         <div class="terminal-container">
                             <div class="terminal-header">
                                 <div class="terminal-dots">
-                                    <span class="dot-red"></span
-                                    ><span class="dot-yellow"></span
-                                    ><span class="dot-green"></span>
+                                    <span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span>
                                 </div>
                                 <div class="terminal-title">bash - install</div>
                             </div>
                             <div class="terminal-body" style="font-size: 15px">
-                                <span class="comment"># Sous macOS</span>
-                                <span class="prompt">$</span
-                                ><span class="command"
-                                    >brew install minikube</span
-                                >
+                                <span class="comment"># Téléchargement du binaire</span>
+                                <span class="prompt">$</span><span class="command">curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"</span>
                                 <br />
-                                <span class="comment"># Sous Windows</span>
-                                <span class="prompt">></span
-                                ><span class="command"
-                                    >winget install minikube</span
-                                >
-                                <br />
-                                <span class="comment"># Sous Linux</span>
-                                <span class="prompt">$</span
-                                ><span class="command"
-                                    >curl -LO
-                                    https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64</span
-                                ><br />
-                                <span class="prompt">$</span
-                                ><span class="command"
-                                    >sudo install minikube-linux-amd64
-                                    /usr/local/bin/minikube</span
-                                >
-                                <br />
-                                <span class="comment"
-                                    ># Vérification finale</span
-                                >
-                                <span class="prompt">$</span
-                                ><span class="command">minikube version</span
-                                ><br />
-                                <span class="prompt">$</span
-                                ><span class="command"
-                                    >kubectl version --client</span
-                                >
+                                <span class="comment"># Installation</span>
+                                <span class="prompt">$</span><span class="command">sudo install kubectl /usr/local/bin/</span>
                             </div>
                         </div>
                     </div>
@@ -2236,8 +2155,237 @@ graph LR
             </div>
         </div>
 
-        <!-- Slide 26: Section_Title (TP Start) -->
+        <!-- Slide 30: Installation Minikube -->
         <div class="slide-container" id="slide30">
+            <div class="top-accent"></div>
+            <h2 class="slide-title">
+                Préparation : <span class="bordeaux">Minikube</span>
+            </h2>
+            <div class="content-area">
+                <div class="two-column" style="gap: 40px">
+                    <!-- TEXT SIDE -->
+                    <div class="content-container" style="width: 45%">
+                        <ul class="tp-list">
+                            <li>
+                                <h3>
+                                    <i class="fa-solid fa-cubes"></i>
+                                    Installation Minikube
+                                </h3>
+                                <p>
+                                    L'outil qui crée un cluster Kubernetes local
+                                    (un seul nœud) directement sur votre machine.
+                                </p>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- TERMINAL SIDE -->
+                    <div class="content-container" style="width: 55%; margin: 0">
+                        <div class="terminal-container">
+                            <div class="terminal-header">
+                                <div class="terminal-dots">
+                                    <span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span>
+                                </div>
+                                <div class="terminal-title">bash - install</div>
+                            </div>
+                            <div class="terminal-body" style="font-size: 15px">
+                                <span class="comment"># Téléchargement</span>
+                                <span class="prompt">$</span><span class="command">curl -LO https://github.com/kubernetes/minikube/releases/latest/download/minikube-linux-amd64</span>
+                                <br />
+                                <span class="comment"># Installation</span>
+                                <span class="prompt">$</span><span class="command">sudo install minikube-linux-amd64 /usr/local/bin/minikube &amp;&amp; rm minikube-linux-amd64</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 31: Installation Helm -->
+        <div class="slide-container" id="slide31">
+            <div class="top-accent"></div>
+            <h2 class="slide-title">
+                Préparation : <span class="bordeaux">Helm</span>
+            </h2>
+            <div class="content-area">
+                <div class="two-column" style="gap: 40px">
+                    <!-- TEXT SIDE -->
+                    <div class="content-container" style="width: 45%">
+                        <ul class="tp-list">
+                            <li>
+                                <h3>
+                                    <i class="fa-solid fa-ship"></i>
+                                    Installation Helm
+                                </h3>
+                                <p>
+                                    Le gestionnaire de paquets de Kubernetes.
+                                    Indispensable pour déployer des applications
+                                    packagées (Charts).
+                                </p>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- TERMINAL SIDE -->
+                    <div class="content-container" style="width: 55%; margin: 0">
+                        <div class="terminal-container">
+                            <div class="terminal-header">
+                                <div class="terminal-dots">
+                                    <span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span>
+                                </div>
+                                <div class="terminal-title">bash - install</div>
+                            </div>
+                            <div class="terminal-body" style="font-size: 15px">
+                                <span class="comment"># Installation de Helm</span>
+                                <span class="prompt">$</span><span class="command">curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-4 | bash</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 32: Headlamp — Installation -->
+        <div class="slide-container" id="slide32">
+            <div class="top-accent"></div>
+            <h2 class="slide-title">
+                Headlamp : <span class="bordeaux">Installation</span>
+            </h2>
+            <div class="content-area">
+                <div class="two-column" style="gap: 40px">
+                    <!-- TEXT SIDE -->
+                    <div class="content-container" style="width: 45%">
+                        <ul class="tp-list">
+                            <li>
+                                <h3>
+                                    <i class="fa-solid fa-desktop"></i>
+                                    Headlamp
+                                </h3>
+                                <p>
+                                    Une interface web moderne pour visualiser et
+                                    gérer votre cluster Kubernetes. Installé via
+                                    Helm.
+                                </p>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- TERMINAL SIDE -->
+                    <div class="content-container" style="width: 55%; margin: 0">
+                        <div class="terminal-container">
+                            <div class="terminal-header">
+                                <div class="terminal-dots">
+                                    <span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span>
+                                </div>
+                                <div class="terminal-title">bash - install</div>
+                            </div>
+                            <div class="terminal-body" style="font-size: 15px">
+                                <span class="comment"># Ajout du dépôt Helm</span>
+                                <span class="prompt">$</span><span class="command">helm repo add headlamp https://kubernetes-sigs.github.io/headlamp/</span>
+                                <br />
+                                <span class="comment"># Installation dans le namespace kube-system</span>
+                                <span class="prompt">$</span><span class="command">helm install my-headlamp headlamp/headlamp --namespace kube-system</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 33: Headlamp — Configuration -->
+        <div class="slide-container" id="slide33">
+            <div class="top-accent"></div>
+            <h2 class="slide-title">
+                Headlamp : <span class="bordeaux">Configuration</span>
+            </h2>
+            <div class="content-area">
+                <div class="two-column" style="gap: 40px">
+                    <!-- TEXT SIDE -->
+                    <div class="content-container" style="width: 45%">
+                        <ul class="tp-list">
+                            <li>
+                                <h3>
+                                    <i class="fa-solid fa-key"></i>
+                                    Accès administrateur
+                                </h3>
+                                <p>
+                                    Créez un compte de service administrateur et
+                                    générez un token d'accès pour vous connecter
+                                    à l'interface.
+                                </p>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- TERMINAL SIDE -->
+                    <div class="content-container" style="width: 55%; margin: 0">
+                        <div class="terminal-container">
+                            <div class="terminal-header">
+                                <div class="terminal-dots">
+                                    <span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span>
+                                </div>
+                                <div class="terminal-title">bash - install</div>
+                            </div>
+                            <div class="terminal-body" style="font-size: 15px">
+                                <span class="comment"># Création du ServiceAccount</span>
+                                <span class="prompt">$</span><span class="command">kubectl -n kube-system create serviceaccount headlamp-admin</span>
+                                <br />
+                                <span class="comment"># Attribution des droits admin</span>
+                                <span class="prompt">$</span><span class="command">kubectl create clusterrolebinding headlamp-admin --serviceaccount=kube-system:headlamp-admin --clusterrole=cluster-admin</span>
+                                <br />
+                                <span class="comment"># Génération du token de connexion</span>
+                                <span class="prompt">$</span><span class="command">kubectl create token headlamp-admin -n kube-system</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 34: Minecraft sur Kubernetes -->
+        <div class="slide-container" id="slide34">
+            <div class="top-accent"></div>
+            <h2 class="slide-title">
+                Fun : <span class="bordeaux">Minecraft sur K8s</span>
+            </h2>
+            <div class="content-area">
+                <div class="two-column" style="gap: 40px">
+                    <!-- TEXT SIDE -->
+                    <div class="content-container" style="width: 45%">
+                        <ul class="tp-list">
+                            <li>
+                                <h3>
+                                    <i class="fa-solid fa-gamepad"></i>
+                                    Déploiement Minecraft
+                                </h3>
+                                <p>
+                                    Déployez un serveur Minecraft complet sur
+                                    votre cluster en quelques secondes grâce à
+                                    Helm. La puissance du packaging !
+                                </p>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- TERMINAL SIDE -->
+                    <div class="content-container" style="width: 55%; margin: 0">
+                        <div class="terminal-container">
+                            <div class="terminal-header">
+                                <div class="terminal-dots">
+                                    <span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span>
+                                </div>
+                                <div class="terminal-title">bash - install</div>
+                            </div>
+                            <div class="terminal-body" style="font-size: 15px">
+                                <span class="comment"># Ajout du dépôt Helm</span>
+                                <span class="prompt">$</span><span class="command">helm repo add itzg https://itzg.github.io/minecraft-server-charts/</span>
+                                <br />
+                                <span class="comment"># Déploiement du serveur Minecraft</span>
+                                <span class="prompt">$</span><span class="command">helm install minecraft itzg/minecraft-server --set eula=true</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 35: Section_Title (TP Start) -->
+        <div class="slide-container" id="slide35">
             <div class="top-accent"></div>
             <h2 class="slide-title">Travaux Pratiques <span class="bordeaux">(TP)</span></h2>
             <p class="subtitle" style="margin-top: -30px; margin-bottom: 40px">Ouvrez vos terminaux. Il est temps de mettre les mains dans le cambouis.</p>
@@ -2277,8 +2425,8 @@ graph LR
             </div>
         </div>
 
-        <!-- Slide 27: TP 1 (1/2) -->
-        <div class="slide-container" id="slide31">
+        <!-- Slide 36: TP 1 (1/2) -->
+        <div class="slide-container" id="slide36">
             <div class="top-accent"></div>
             <h2 class="slide-title">
                 TP 1 (1/2) : <span class="bordeaux">Démarrage & Création</span>
@@ -2350,8 +2498,8 @@ graph LR
             </div>
         </div>
 
-        <!-- Slide 28: TP 1 (2/2) -->
-        <div class="slide-container" id="slide32">
+        <!-- Slide 37: TP 1 (2/2) -->
+        <div class="slide-container" id="slide37">
             <div class="top-accent"></div>
             <h2 class="slide-title">
                 TP 1 (2/2) :
@@ -2428,8 +2576,8 @@ graph LR
             </div>
         </div>
 
-        <!-- Slide 29: TP 2 (1/2) -->
-        <div class="slide-container" id="slide33">
+        <!-- Slide 38: TP 2 (1/2) -->
+        <div class="slide-container" id="slide38">
             <div class="top-accent"></div>
             <h2 class="slide-title">
                 TP 2 (1/2) :
@@ -2507,8 +2655,8 @@ graph LR
             </div>
         </div>
 
-        <!-- Slide 30: TP 2 (2/2) -->
-        <div class="slide-container" id="slide34">
+        <!-- Slide 39: TP 2 (2/2) -->
+        <div class="slide-container" id="slide39">
             <div class="top-accent"></div>
             <h2 class="slide-title">
                 TP 2 (2/2) : <span class="bordeaux">Exposition réseau</span>
@@ -2582,8 +2730,8 @@ graph LR
             </div>
         </div>
 
-        <!-- Slide 31: TP 3 (1/2) -->
-        <div class="slide-container" id="slide35">
+        <!-- Slide 40: TP 3 (1/2) -->
+        <div class="slide-container" id="slide40">
             <div class="top-accent"></div>
             <h2 class="slide-title">
                 TP 3 (1/2) : <span class="bordeaux">Interface Headlamp</span>
@@ -2657,8 +2805,8 @@ graph LR
             </div>
         </div>
 
-        <!-- Slide 32: TP 3 (2/2) -->
-        <div class="slide-container" id="slide36">
+        <!-- Slide 41: TP 3 (2/2) -->
+        <div class="slide-container" id="slide41">
             <div class="top-accent"></div>
             <h2 class="slide-title">
                 TP 3 (2/2) : <span class="bordeaux">Accès à l'Interface</span>
@@ -2729,8 +2877,8 @@ graph LR
             </div>
         </div>
 
-        <!-- Slide 33: Ressources et Sources -->
-        <div class="slide-container" id="slide37">
+        <!-- Slide 42: Ressources et Sources -->
+        <div class="slide-container" id="slide42">
             <div class="top-accent"></div>
             <h2 class="slide-title">Ressources & <span>Sources</span></h2>
             <div class="content-area">
@@ -2785,8 +2933,8 @@ graph LR
             </div>
         </div>
 
-        <!-- Slide 34: Q&A -->
-        <div class="slide-container" id="slide38">
+        <!-- Slide 43: Q&A -->
+        <div class="slide-container" id="slide43">
             <div class="top-accent"></div>
             <div class="qa-layout">
                 <h2>Questions <span class="bordeaux">?</span></h2>
