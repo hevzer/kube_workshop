@@ -2338,54 +2338,8 @@ graph LR
             </div>
         </div>
 
-        <!-- Slide 34: Minecraft sur Kubernetes -->
+        <!-- Slide 34: Section_Title (TP Start) -->
         <div class="slide-container" id="slide34">
-            <div class="top-accent"></div>
-            <h2 class="slide-title">
-                Fun : <span class="bordeaux">Minecraft sur K8s</span>
-            </h2>
-            <div class="content-area">
-                <div class="two-column" style="gap: 40px">
-                    <!-- TEXT SIDE -->
-                    <div class="content-container" style="width: 45%">
-                        <ul class="tp-list">
-                            <li>
-                                <h3>
-                                    <i class="fa-solid fa-gamepad"></i>
-                                    Déploiement Minecraft
-                                </h3>
-                                <p>
-                                    Déployez un serveur Minecraft complet sur
-                                    votre cluster en quelques secondes grâce à
-                                    Helm. La puissance du packaging !
-                                </p>
-                            </li>
-                        </ul>
-                    </div>
-                    <!-- TERMINAL SIDE -->
-                    <div class="content-container" style="width: 55%; margin: 0">
-                        <div class="terminal-container">
-                            <div class="terminal-header">
-                                <div class="terminal-dots">
-                                    <span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span>
-                                </div>
-                                <div class="terminal-title">bash - install</div>
-                            </div>
-                            <div class="terminal-body" style="font-size: 15px">
-                                <span class="comment"># Ajout du dépôt Helm</span>
-                                <span class="prompt">$</span><span class="command">helm repo add itzg https://itzg.github.io/minecraft-server-charts/</span>
-                                <br />
-                                <span class="comment"># Déploiement du serveur Minecraft</span>
-                                <span class="prompt">$</span><span class="command">helm install minecraft itzg/minecraft-server --set eula=true</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 35: Section_Title (TP Start) -->
-        <div class="slide-container" id="slide35">
             <div class="top-accent"></div>
             <h2 class="slide-title">Travaux Pratiques <span class="bordeaux">(TP)</span></h2>
             <p class="subtitle" style="margin-top: -30px; margin-bottom: 40px">Ouvrez vos terminaux. Il est temps de mettre les mains dans le cambouis.</p>
@@ -2425,8 +2379,8 @@ graph LR
             </div>
         </div>
 
-        <!-- Slide 36: TP 1 (1/2) -->
-        <div class="slide-container" id="slide36">
+        <!-- Slide 35: TP 1 (1/2) -->
+        <div class="slide-container" id="slide35">
             <div class="top-accent"></div>
             <h2 class="slide-title">
                 TP 1 (1/2) : <span class="bordeaux">Démarrage & Création</span>
@@ -2498,8 +2452,8 @@ graph LR
             </div>
         </div>
 
-        <!-- Slide 37: TP 1 (2/2) -->
-        <div class="slide-container" id="slide37">
+        <!-- Slide 36: TP 1 (2/2) -->
+        <div class="slide-container" id="slide36">
             <div class="top-accent"></div>
             <h2 class="slide-title">
                 TP 1 (2/2) :
@@ -2576,8 +2530,8 @@ graph LR
             </div>
         </div>
 
-        <!-- Slide 38: TP 2 (1/2) -->
-        <div class="slide-container" id="slide38">
+        <!-- Slide 37: TP 2 (1/2) -->
+        <div class="slide-container" id="slide37">
             <div class="top-accent"></div>
             <h2 class="slide-title">
                 TP 2 (1/2) :
@@ -2655,8 +2609,8 @@ graph LR
             </div>
         </div>
 
-        <!-- Slide 39: TP 2 (2/2) -->
-        <div class="slide-container" id="slide39">
+        <!-- Slide 38: TP 2 (2/2) -->
+        <div class="slide-container" id="slide38">
             <div class="top-accent"></div>
             <h2 class="slide-title">
                 TP 2 (2/2) : <span class="bordeaux">Exposition réseau</span>
@@ -2730,11 +2684,11 @@ graph LR
             </div>
         </div>
 
-        <!-- Slide 40: TP 3 (1/2) -->
-        <div class="slide-container" id="slide40">
+        <!-- Slide 39: TP 3 (1/3) -->
+        <div class="slide-container" id="slide39">
             <div class="top-accent"></div>
             <h2 class="slide-title">
-                TP 3 (1/2) : <span class="bordeaux">Interface Headlamp</span>
+                TP 3 (1/3) : <span class="bordeaux">Interface Headlamp</span>
             </h2>
             <div class="content-area">
                 <div class="two-column" style="gap: 40px">
@@ -2743,13 +2697,13 @@ graph LR
                         <ul class="tp-list">
                             <li>
                                 <h3>
-                                    <i class="fa-solid fa-download"></i> 1. YAML
-                                    distant
+                                    <i class="fa-solid fa-download"></i> 1. Helm
+                                    Install
                                 </h3>
                                 <p>
-                                    Déployez ce Dashboard d'administration
-                                    directement depuis son dépôt officiel sur
-                                    GitHub.
+                                    Installez le Dashboard Headlamp via Helm,
+                                    le gestionnaire de paquets que vous avez
+                                    configuré plus tôt.
                                 </p>
                             </li>
                             <li>
@@ -2782,12 +2736,16 @@ graph LR
                             </div>
                             <div class="terminal-body" style="font-size: 15px">
                                 <span class="comment"
-                                    ># 1. Appliquer un manifeste distant</span
+                                    ># 1. Installer Headlamp avec Helm</span
                                 >
                                 <span class="prompt">$</span
                                 ><span class="command"
-                                    >kubectl apply -f
-                                    https://raw.githubusercontent.com/headlamp-k8s/headlamp/main/kubernetes-headlamp.yaml</span
+                                    >helm repo add headlamp https://kubernetes-sigs.github.io/headlamp/</span
+                                >
+                                <br />
+                                <span class="prompt">$</span
+                                ><span class="command"
+                                    >helm install my-headlamp headlamp/headlamp --namespace kube-system</span
                                 >
                                 <br />
                                 <span class="comment"
@@ -2795,8 +2753,7 @@ graph LR
                                 >
                                 <span class="prompt">$</span
                                 ><span class="command"
-                                    >kubectl port-forward svc/headlamp 4000:80
-                                    -n kube-system</span
+                                    >kubectl port-forward -n kube-system svc/my-headlamp 8080:80</span
                                 >
                             </div>
                         </div>
@@ -2805,11 +2762,11 @@ graph LR
             </div>
         </div>
 
-        <!-- Slide 41: TP 3 (2/2) -->
-        <div class="slide-container" id="slide41">
+        <!-- Slide 40: TP 3 (2/3) -->
+        <div class="slide-container" id="slide40">
             <div class="top-accent"></div>
             <h2 class="slide-title">
-                TP 3 (2/2) : <span class="bordeaux">Accès à l'Interface</span>
+                TP 3 (2/3) : <span class="bordeaux">Accès à l'Interface</span>
             </h2>
             <div class="content-area">
                 <div class="two-column" style="gap: 40px">
@@ -2818,22 +2775,21 @@ graph LR
                         <ul class="tp-list">
                             <li>
                                 <h3>
-                                    <i class="fa-solid fa-key"></i> 3. Le Token
+                                    <i class="fa-solid fa-key"></i> 3.
+                                    ServiceAccount
                                 </h3>
                                 <p>
-                                    Ouvrez un
-                                    <strong>nouveau terminal</strong> et générez
-                                    un jeton administrateur pour vous connecter.
+                                    Créez un compte de service dédié avec les
+                                    droits administrateur sur le cluster.
                                 </p>
                             </li>
                             <li>
                                 <h3>
-                                    <i class="fa-solid fa-eye"></i> 4.
-                                    Visualisation
+                                    <i class="fa-solid fa-key"></i> 4-5. Token
                                 </h3>
                                 <p>
-                                    Ouvrez votre navigateur, collez le token, et
-                                    admirez visuellement vos ressources !
+                                    Liez ce compte au rôle cluster-admin, puis
+                                    générez un jeton de connexion temporaire.
                                 </p>
                             </li>
                         </ul>
@@ -2854,21 +2810,29 @@ graph LR
                                     bash - minikube (Nouveau Tab)
                                 </div>
                             </div>
-                            <div class="terminal-body">
+                            <div class="terminal-body" style="font-size: 15px">
                                 <span class="comment"
-                                    ># 3. Générer le jeton de sécurité</span
+                                    ># 3. Créer le ServiceAccount admin</span
                                 >
                                 <span class="prompt">$</span
                                 ><span class="command"
-                                    >kubectl create token default</span
+                                    >kubectl -n kube-system create serviceaccount headlamp-admin</span
                                 >
                                 <br />
                                 <span class="comment"
-                                    ># 4. URL à ouvrir dans le navigateur</span
+                                    ># 4. Attribuer les droits cluster-admin</span
                                 >
-                                <span class="prompt">></span
-                                ><span class="command" style="color: #fcd34d"
-                                    >http://localhost:4000</span
+                                <span class="prompt">$</span
+                                ><span class="command"
+                                    >kubectl create clusterrolebinding headlamp-admin --serviceaccount=kube-system:headlamp-admin --clusterrole=cluster-admin</span
+                                >
+                                <br />
+                                <span class="comment"
+                                    ># 5. Générer le token de connexion</span
+                                >
+                                <span class="prompt">$</span
+                                ><span class="command"
+                                    >kubectl create token headlamp-admin -n kube-system</span
                                 >
                             </div>
                         </div>
@@ -2877,8 +2841,130 @@ graph LR
             </div>
         </div>
 
-        <!-- Slide 42: Ressources et Sources -->
+        <!-- Slide 41: TP 3 (3/3) -->
+        <div class="slide-container" id="slide41">
+            <div class="top-accent"></div>
+            <h2 class="slide-title">
+                TP 3 (3/3) :
+                <span class="bordeaux">Connexion à Headlamp</span>
+            </h2>
+            <div class="content-area">
+                <div class="two-column" style="gap: 40px">
+                    <!-- TEXT SIDE -->
+                    <div class="content-container" style="width: 45%">
+                        <ul class="tp-list">
+                            <li>
+                                <h3>
+                                    <i class="fa-solid fa-globe"></i> 6.
+                                    Connexion
+                                </h3>
+                                <p>
+                                    Ouvrez l'URL affichée dans le terminal du
+                                    port-forward et collez le token généré à
+                                    l'étape précédente.
+                                </p>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- TERMINAL SIDE -->
+                    <div
+                        class="content-container"
+                        style="width: 55%; margin: 0"
+                    >
+                        <div class="terminal-container">
+                            <div class="terminal-header">
+                                <div class="terminal-dots">
+                                    <span class="dot-red"></span
+                                    ><span class="dot-yellow"></span
+                                    ><span class="dot-green"></span>
+                                </div>
+                                <div class="terminal-title">
+                                    bash - minikube
+                                </div>
+                            </div>
+                            <div class="terminal-body" style="font-size: 15px">
+                                <span class="comment"
+                                    ># 6. Ouvrir le navigateur à l'URL du port-forward</span
+                                >
+                                <span class="prompt">></span><span class="command" style="color: #fcd34d"
+                                    >Copiez l'URL depuis le terminal du port-forward</span
+                                >
+                                <br />
+                                <span class="comment"
+                                    ># Puis collez le token dans le champ de connexion</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 42: Minecraft sur Kubernetes -->
         <div class="slide-container" id="slide42">
+            <div class="top-accent"></div>
+            <h2 class="slide-title">
+                Fun : <span class="bordeaux">Minecraft sur K8s</span>
+            </h2>
+            <div class="content-area">
+                <div class="two-column" style="gap: 40px">
+                    <!-- TEXT SIDE -->
+                    <div class="content-container" style="width: 45%">
+                        <ul class="tp-list">
+                            <li>
+                                <h3>
+                                    <i class="fa-solid fa-gamepad"></i>
+                                    Déploiement Minecraft
+                                </h3>
+                                <p>
+                                    Déployez un serveur Minecraft complet sur
+                                    votre cluster en quelques secondes grâce à
+                                    Helm. La puissance du packaging !
+                                </p>
+                            </li>
+                            <li>
+                                <h3>
+                                    <i class="fa-solid fa-network-wired"></i>
+                                    Connexion
+                                </h3>
+                                <p>
+                                    Créez un tunnel vers le serveur et
+                                    connectez-vous depuis votre client
+                                    Minecraft sur <strong>localhost:25565</strong>.
+                                </p>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- TERMINAL SIDE -->
+                    <div class="content-container" style="width: 55%; margin: 0">
+                        <div class="terminal-container">
+                            <div class="terminal-header">
+                                <div class="terminal-dots">
+                                    <span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span>
+                                </div>
+                                <div class="terminal-title">bash - install</div>
+                            </div>
+                            <div class="terminal-body" style="font-size: 15px">
+                                <span class="comment"># Ajout du dépôt Helm</span>
+                                <span class="prompt">$</span><span class="command">helm repo add itzg https://itzg.github.io/minecraft-server-charts/</span>
+                                <br />
+                                <span class="comment"># Déploiement du serveur Minecraft</span>
+                                <span class="prompt">$</span><span class="command">helm install minecraft itzg/minecraft-server --set eula=true</span>
+                                <br />
+                                <span class="comment"># Port-forward vers le serveur</span>
+                                <span class="prompt">$</span><span class="command">kubectl port-forward svc/minecraft-minecraft 25565:25565</span>
+                                <br />
+                                <span class="comment"># Connexion depuis le client Minecraft</span>
+                                <span class="prompt">></span><span class="command" style="color: #fcd34d">localhost:25565</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 43: Ressources et Sources -->
+        <div class="slide-container" id="slide43">
             <div class="top-accent"></div>
             <h2 class="slide-title">Ressources & <span>Sources</span></h2>
             <div class="content-area">
@@ -2933,8 +3019,8 @@ graph LR
             </div>
         </div>
 
-        <!-- Slide 43: Q&A -->
-        <div class="slide-container" id="slide43">
+        <!-- Slide 44: Q&A -->
+        <div class="slide-container" id="slide44">
             <div class="top-accent"></div>
             <div class="qa-layout">
                 <h2>Questions <span class="bordeaux">?</span></h2>
