@@ -2952,7 +2952,7 @@ graph LR
                                 <span class="prompt">$</span><span class="command">helm install minecraft --set minecraftServer.eula=true itzg/minecraft</span>
                                 <br />
                                 <span class="comment"># Port-forward vers le serveur</span>
-                                <span class="prompt">$</span><span class="command">kubectl port-forward svc/minecraft-minecraft 25565:25565</span>
+                                <span class="prompt">$</span><span class="command">kubectl port-forward svc/minecraft 25565:25565</span>
                                 <br />
                                 <span class="comment"># Connexion depuis le client Minecraft</span>
                                 <span class="prompt">></span><span class="command" style="color: #fcd34d">localhost:25565</span>
