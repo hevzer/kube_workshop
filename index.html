@@ -2243,103 +2243,8 @@ graph LR
             </div>
         </div>
 
-        <!-- Slide 32: Headlamp — Installation -->
+        <!-- Slide 32: Section_Title (TP Start) -->
         <div class="slide-container" id="slide32">
-            <div class="top-accent"></div>
-            <h2 class="slide-title">
-                Headlamp : <span class="bordeaux">Installation</span>
-            </h2>
-            <div class="content-area">
-                <div class="two-column" style="gap: 40px">
-                    <!-- TEXT SIDE -->
-                    <div class="content-container" style="width: 45%">
-                        <ul class="tp-list">
-                            <li>
-                                <h3>
-                                    <i class="fa-solid fa-desktop"></i>
-                                    Headlamp
-                                </h3>
-                                <p>
-                                    Une interface web moderne pour visualiser et
-                                    gérer votre cluster Kubernetes. Installé via
-                                    Helm.
-                                </p>
-                            </li>
-                        </ul>
-                    </div>
-                    <!-- TERMINAL SIDE -->
-                    <div class="content-container" style="width: 55%; margin: 0">
-                        <div class="terminal-container">
-                            <div class="terminal-header">
-                                <div class="terminal-dots">
-                                    <span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span>
-                                </div>
-                                <div class="terminal-title">bash - install</div>
-                            </div>
-                            <div class="terminal-body" style="font-size: 15px">
-                                <span class="comment"># Ajout du dépôt Helm</span>
-                                <span class="prompt">$</span><span class="command">helm repo add headlamp https://kubernetes-sigs.github.io/headlamp/</span>
-                                <br />
-                                <span class="comment"># Installation dans le namespace kube-system</span>
-                                <span class="prompt">$</span><span class="command">helm install my-headlamp headlamp/headlamp --namespace kube-system</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 33: Headlamp — Configuration -->
-        <div class="slide-container" id="slide33">
-            <div class="top-accent"></div>
-            <h2 class="slide-title">
-                Headlamp : <span class="bordeaux">Configuration</span>
-            </h2>
-            <div class="content-area">
-                <div class="two-column" style="gap: 40px">
-                    <!-- TEXT SIDE -->
-                    <div class="content-container" style="width: 45%">
-                        <ul class="tp-list">
-                            <li>
-                                <h3>
-                                    <i class="fa-solid fa-key"></i>
-                                    Accès administrateur
-                                </h3>
-                                <p>
-                                    Créez un compte de service administrateur et
-                                    générez un token d'accès pour vous connecter
-                                    à l'interface.
-                                </p>
-                            </li>
-                        </ul>
-                    </div>
-                    <!-- TERMINAL SIDE -->
-                    <div class="content-container" style="width: 55%; margin: 0">
-                        <div class="terminal-container">
-                            <div class="terminal-header">
-                                <div class="terminal-dots">
-                                    <span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span>
-                                </div>
-                                <div class="terminal-title">bash - install</div>
-                            </div>
-                            <div class="terminal-body" style="font-size: 15px">
-                                <span class="comment"># Création du ServiceAccount</span>
-                                <span class="prompt">$</span><span class="command">kubectl -n kube-system create serviceaccount headlamp-admin</span>
-                                <br />
-                                <span class="comment"># Attribution des droits admin</span>
-                                <span class="prompt">$</span><span class="command">kubectl create clusterrolebinding headlamp-admin --serviceaccount=kube-system:headlamp-admin --clusterrole=cluster-admin</span>
-                                <br />
-                                <span class="comment"># Génération du token de connexion</span>
-                                <span class="prompt">$</span><span class="command">kubectl create token headlamp-admin -n kube-system</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 34: Section_Title (TP Start) -->
-        <div class="slide-container" id="slide34">
             <div class="top-accent"></div>
             <h2 class="slide-title">Travaux Pratiques <span class="bordeaux">(TP)</span></h2>
             <p class="subtitle" style="margin-top: -30px; margin-bottom: 40px">Ouvrez vos terminaux. Il est temps de mettre les mains dans le cambouis.</p>
@@ -2379,8 +2284,8 @@ graph LR
             </div>
         </div>
 
-        <!-- Slide 35: TP 1 (1/2) -->
-        <div class="slide-container" id="slide35">
+        <!-- Slide 33: TP 1 (1/2) -->
+        <div class="slide-container" id="slide33">
             <div class="top-accent"></div>
             <h2 class="slide-title">
                 TP 1 (1/2) : <span class="bordeaux">Démarrage & Création</span>
@@ -2452,8 +2357,8 @@ graph LR
             </div>
         </div>
 
-        <!-- Slide 36: TP 1 (2/2) -->
-        <div class="slide-container" id="slide36">
+        <!-- Slide 34: TP 1 (2/2) -->
+        <div class="slide-container" id="slide34">
             <div class="top-accent"></div>
             <h2 class="slide-title">
                 TP 1 (2/2) :
@@ -2530,8 +2435,8 @@ graph LR
             </div>
         </div>
 
-        <!-- Slide 37: TP 2 (1/2) -->
-        <div class="slide-container" id="slide37">
+        <!-- Slide 35: TP 2 (1/2) -->
+        <div class="slide-container" id="slide35">
             <div class="top-accent"></div>
             <h2 class="slide-title">
                 TP 2 (1/2) :
@@ -2609,8 +2514,8 @@ graph LR
             </div>
         </div>
 
-        <!-- Slide 38: TP 2 (2/2) -->
-        <div class="slide-container" id="slide38">
+        <!-- Slide 36: TP 2 (2/2) -->
+        <div class="slide-container" id="slide36">
             <div class="top-accent"></div>
             <h2 class="slide-title">
                 TP 2 (2/2) : <span class="bordeaux">Exposition réseau</span>
@@ -2677,6 +2582,101 @@ graph LR
                                 ><span class="command"
                                     >minikube service web-app</span
                                 >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 37: Headlamp — Installation -->
+        <div class="slide-container" id="slide37">
+            <div class="top-accent"></div>
+            <h2 class="slide-title">
+                Headlamp : <span class="bordeaux">Installation</span>
+            </h2>
+            <div class="content-area">
+                <div class="two-column" style="gap: 40px">
+                    <!-- TEXT SIDE -->
+                    <div class="content-container" style="width: 45%">
+                        <ul class="tp-list">
+                            <li>
+                                <h3>
+                                    <i class="fa-solid fa-desktop"></i>
+                                    Headlamp
+                                </h3>
+                                <p>
+                                    Une interface web moderne pour visualiser et
+                                    gérer votre cluster Kubernetes. Installé via
+                                    Helm.
+                                </p>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- TERMINAL SIDE -->
+                    <div class="content-container" style="width: 55%; margin: 0">
+                        <div class="terminal-container">
+                            <div class="terminal-header">
+                                <div class="terminal-dots">
+                                    <span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span>
+                                </div>
+                                <div class="terminal-title">bash - install</div>
+                            </div>
+                            <div class="terminal-body" style="font-size: 15px">
+                                <span class="comment"># Ajout du dépôt Helm</span>
+                                <span class="prompt">$</span><span class="command">helm repo add headlamp https://kubernetes-sigs.github.io/headlamp/</span>
+                                <br />
+                                <span class="comment"># Installation dans le namespace kube-system</span>
+                                <span class="prompt">$</span><span class="command">helm install my-headlamp headlamp/headlamp --namespace kube-system</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 38: Headlamp — Configuration -->
+        <div class="slide-container" id="slide38">
+            <div class="top-accent"></div>
+            <h2 class="slide-title">
+                Headlamp : <span class="bordeaux">Configuration</span>
+            </h2>
+            <div class="content-area">
+                <div class="two-column" style="gap: 40px">
+                    <!-- TEXT SIDE -->
+                    <div class="content-container" style="width: 45%">
+                        <ul class="tp-list">
+                            <li>
+                                <h3>
+                                    <i class="fa-solid fa-key"></i>
+                                    Accès administrateur
+                                </h3>
+                                <p>
+                                    Créez un compte de service administrateur et
+                                    générez un token d'accès pour vous connecter
+                                    à l'interface.
+                                </p>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- TERMINAL SIDE -->
+                    <div class="content-container" style="width: 55%; margin: 0">
+                        <div class="terminal-container">
+                            <div class="terminal-header">
+                                <div class="terminal-dots">
+                                    <span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span>
+                                </div>
+                                <div class="terminal-title">bash - install</div>
+                            </div>
+                            <div class="terminal-body" style="font-size: 15px">
+                                <span class="comment"># Création du ServiceAccount</span>
+                                <span class="prompt">$</span><span class="command">kubectl -n kube-system create serviceaccount headlamp-admin</span>
+                                <br />
+                                <span class="comment"># Attribution des droits admin</span>
+                                <span class="prompt">$</span><span class="command">kubectl create clusterrolebinding headlamp-admin --serviceaccount=kube-system:headlamp-admin --clusterrole=cluster-admin</span>
+                                <br />
+                                <span class="comment"># Génération du token de connexion</span>
+                                <span class="prompt">$</span><span class="command">kubectl create token headlamp-admin -n kube-system</span>
                             </div>
                         </div>
                     </div>
