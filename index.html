@@ -2949,7 +2949,7 @@ graph LR
                                 <span class="prompt">$</span><span class="command">helm repo add itzg https://itzg.github.io/minecraft-server-charts/</span>
                                 <br />
                                 <span class="comment"># Déploiement du serveur Minecraft</span>
-                                <span class="prompt">$</span><span class="command">helm install minecraft itzg/minecraft-server --set eula=true</span>
+                                <span class="prompt">$</span><span class="command">helm install minecraft --set minecraftServer.eula=true itzg/minecraft</span>
                                 <br />
                                 <span class="comment"># Port-forward vers le serveur</span>
                                 <span class="prompt">$</span><span class="command">kubectl port-forward svc/minecraft-minecraft 25565:25565</span>
